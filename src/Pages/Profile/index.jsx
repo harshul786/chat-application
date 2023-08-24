@@ -14,7 +14,7 @@ export default function Profile() {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-        // credentials: "include",
+        credentials: "include",
       });
       const result = await response.json();
 

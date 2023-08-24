@@ -29,6 +29,12 @@ router.post("/signup", (req, res) => {
     .save()
     .then(async function () {
       const token = await user.generateAuthToken();
+      res.cookie("Auth", token, {
+        expires: new Date(Date.now() + 300000),
+        httpOnly: true,
+        // sameSite: "none",
+        secure: true,
+      });
       res.send({ user: user.getPublicObject(), token });
     })
     .catch((err) => res.send(err));
@@ -42,10 +48,10 @@ router.post("/signin", async function (req, res) {
     );
 
     const token = await user.generateAuthToken();
-    res.cookie("Authentication", token, {
+    res.cookie("Auth", token, {
       expires: new Date(Date.now() + 300000),
       httpOnly: true,
-      sameSite: "none",
+      // sameSite: "none",
       secure: true,
     });
     res.send({ user: user.getPublicObject(), token });
