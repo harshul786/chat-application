@@ -17,7 +17,7 @@ const auth = async (req, res, next) => {
     });
 
     if (!user) {
-      throw new Error();
+      throw new Error(decoded);
     }
 
     req.token = token;

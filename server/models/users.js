@@ -56,7 +56,7 @@ userSchema.methods.getPublicObject = function () {
 userSchema.methods.generateAuthToken = async function () {
   const user = this;
 
-  const token = jwt.sign({ _id: user._id.toString() }, jwt_secret, {
+  const token = jwt.sign({ _id: user._id.toString() }, "jwt-auth", {
     expiresIn: "7 days",
   });
   user.tokens = user.tokens.concat({ token });
