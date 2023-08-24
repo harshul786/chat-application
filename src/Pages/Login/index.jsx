@@ -31,6 +31,7 @@ export default function Login(props) {
 
       // props.setUser(result.user);
       if (response.ok) {
+        console.log(result.token);
         toast("Logged in!", {
           position: "top-center",
           autoClose: 5000,

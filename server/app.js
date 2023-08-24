@@ -54,7 +54,8 @@ router.post("/signin", async function (req, res) {
       // sameSite: "none",
       secure: true,
     });
-    res.send({ user: user.getPublicObject(), token });
+
+    res.send({ user: user.getPublicObject(), token: req.cookies });
   } catch (err) {
     console.log(err);
     res.status(400).send();
