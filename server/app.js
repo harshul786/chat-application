@@ -5,6 +5,7 @@ const auth = require("./middleware/auth");
 const dotenv = require("dotenv");
 const path = require("path");
 const app = express();
+app.use(cookieParser());
 
 require("./mongoose/index").connect();
 const User = require("./models/users");
@@ -12,7 +13,7 @@ const User = require("./models/users");
 app.use(express.urlencoded({ extended: true }));
 
 app.use(express.json());
-app.use(cookieParser());
+
 dotenv.config();
 
 const router = express.Router();
