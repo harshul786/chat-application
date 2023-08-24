@@ -28,7 +28,7 @@ function App() {
           path="/signup"
           element={<Signup user={user} setUser={setUser} />}
         />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/user-profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>
   );
