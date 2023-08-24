@@ -1,24 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./Pages/Login";
+import Signup from "./Pages/Signup";
+import Cookies from "universal-cookie";
+import { useEffect, useState } from "react";
+import Profile from "./Pages/Profile";
 
 function App() {
+  const cookies = new Cookies();
+  const [user, setUser] = useState({});
+  const [token, setToken] = useState("");
+
+  useEffect(() => {
+    console.log({ user, token });
+    if (token) {
+      console.log(cookies.get("Authentication"));
+    }
+  }, [token]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/"
+          element={<Login user={user} setUser={setUser} setToken={setToken} />}
+        />
+        <Route
+          path="/signup"
+          element={<Signup user={user} setUser={setUser} />}
+        />
+        <Route path="/profile" element={<Profile />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
