@@ -1,11 +1,12 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
-const multer = require("multer");
-const auth = require("./middleware/auth");
-const dotenv = require("dotenv");
-const path = require("path");
 const app = express();
 app.use(cookieParser());
+const multer = require("multer");
+const dotenv = require("dotenv");
+const path = require("path");
+
+const auth = require("./middleware/auth");
 
 require("./mongoose/index").connect();
 const User = require("./models/users");
