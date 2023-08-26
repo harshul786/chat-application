@@ -3,11 +3,25 @@ import { Dna } from "react-loader-spinner";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import Bg from "../../images/bg";
+import BgDark from "../../images/bgdark";
 
 export default function Login(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const [mode, setMode] = useState();
+
+  useEffect(() => {
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", (event) => {
+        const colorScheme = event.matches ? "dark" : "light";
+        console.log(colorScheme); // "dark" or "light"
+        setMode(colorScheme);
+      });
+  }, []);
 
   const navigate = useNavigate();
 
@@ -63,9 +77,13 @@ export default function Login(props) {
   };
 
   return (
-    <section className="bg-gray-50 dark:bg-gray-900">
+    <section className="bg-gray-50 ">
+      <div className="absolute z-0 h-screen w-screen">
+        {mode === "dark" ? <BgDark /> : <Bg />}
+      </div>
+
       <ToastContainer />
-      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+      <div className="relative z-10 flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
         {isLoading && (
           <div className="p-10 bg-black/25 rounded-2xl absolute -translate-x-1/2 left-1/2 top-1/2 -translate-y-1/2">
             <Dna
@@ -146,7 +164,7 @@ export default function Login(props) {
                 </div>
                 <a
                   href="/reset-passowrd"
-                  className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
+                  className="text-sm font-medium text-primary-600 hover:underline dark:text-white"
                 >
                   Forgot password?
                 </a>
