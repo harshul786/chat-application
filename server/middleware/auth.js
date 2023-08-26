@@ -7,7 +7,6 @@ const jwt_secret = process.env.JWTSECRET;
 const auth = async (req, res, next) => {
   try {
     // const token = req.header("Authentication").replace("Bearer ", "");
-    console.log(req.cookies);
     const token = req.cookies.Auth;
     const decoded = jwt.verify(token, "jwt-auth");
 
@@ -24,9 +23,7 @@ const auth = async (req, res, next) => {
     req.user = user;
     next();
   } catch (e) {
-    res
-      .status(401)
-      .send({ error: "Please Authenticate", e, token: req.cookies });
+    res.status(401).send({ error: "Please Authenticate", e });
   }
 };
 

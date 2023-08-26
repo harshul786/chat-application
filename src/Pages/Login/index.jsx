@@ -1,21 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dna } from "react-loader-spinner";
-import Cookies from "universal-cookie";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 export default function Login(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const cookies = new Cookies(null, { path: "/" });
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     let data = { email, password };
 
     e.preventDefault();
     setIsLoading(true);
+
+    if (!email || !password) {
+      toast.warn("Please Fill all the Feilds", {
+        autoClose: 5000,
+        position: "bottom-right",
+        theme: "dark",
+      });
+      setIsLoading(false);
+      return;
+    }
 
     try {
       const response = await fetch("/api/signin", {
@@ -31,18 +41,24 @@ export default function Login(props) {
 
       // props.setUser(result.user);
       if (response.ok) {
-        console.log(result.token);
         toast("Logged in!", {
           position: "top-center",
           autoClose: 5000,
           theme: "dark",
         });
+        localStorage.setItem("userInfo", JSON.stringify(result));
+        navigate("/chats");
       }
 
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
-      console.log(err);
+
+      toast.error("Please enter correct email or password!", {
+        autoClose: 5000,
+        position: "bottom-right",
+        theme: "dark",
+      });
     }
   };
 

@@ -6,43 +6,46 @@ require("dotenv").config();
 
 const jwt_secret = process.env.JWTSECRET;
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    require: true,
-  },
-  email: {
-    type: String,
-    require: true,
-    unique: true,
-    validate(val) {
-      if (!validator.isEmail(val)) {
-        throw Error("Not a valid Email Address!");
-      }
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      require: true,
     },
-  },
-  password: {
-    type: String,
-    require: true,
-    validate(val) {
-      if (val.length < 6) {
-        throw Error("Password too short!");
-      }
-    },
-  },
-  tokens: [
-    {
-      token: {
-        type: String,
-        required: true,
+    email: {
+      type: String,
+      require: true,
+      unique: true,
+      validate(val) {
+        if (!validator.isEmail(val)) {
+          throw Error("Not a valid Email Address!");
+        }
       },
     },
-  ],
-  avatar: {
-    type: Buffer,
-    required: false,
+    password: {
+      type: String,
+      require: true,
+      validate(val) {
+        if (val.length < 6) {
+          throw Error("Password too short!");
+        }
+      },
+    },
+    tokens: [
+      {
+        token: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+    avatar: {
+      type: Buffer,
+      required: false,
+    },
   },
-});
+  { timestamps: true }
+);
 
 userSchema.methods.getPublicObject = function () {
   const userObject = this.toObject();
