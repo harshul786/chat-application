@@ -13,7 +13,7 @@ export default function Bg() {
         }}
         // width={2224}
         // height={1335}
-        className="xl:w-screen xl:h-auto h-screen w-auto"
+        className="lg:object-cover lg:w-screen lg:h-screen h-screen w-auto"
         preserveAspectRatio="xMidYMid"
         viewBox="0 0 2224 1335"
       >
