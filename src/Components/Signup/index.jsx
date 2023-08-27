@@ -1,37 +1,22 @@
-import { useEffect, useState } from "react";
-import { Dna } from "react-loader-spinner";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router-dom";
-import Bg from "../../images/bg";
-import BgDark from "../../images/bgdark";
+import { Dna } from "react-loader-spinner";
+import { ChatState } from "../../Context/chatProvider";
 
-export default function Login(props) {
+export default function Signup(props) {
+  const { isUser, setUser } = ChatState();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPass, setConfirmPass] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-  const [mode, setMode] = useState();
-
-  useEffect(() => {
-    window
-      .matchMedia("(prefers-color-scheme: dark)")
-      .addEventListener("change", (event) => {
-        const colorScheme = event.matches ? "dark" : "light";
-        console.log(colorScheme); // "dark" or "light"
-        setMode(colorScheme);
-      });
-  }, []);
-
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    let data = { email, password };
-
-    e.preventDefault();
     setIsLoading(true);
-
-    if (!email || !password) {
+    if (!name || !email || !password || !confirmPass) {
       toast.warn("Please Fill all the Feilds", {
         autoClose: 5000,
         position: "bottom-right",
@@ -40,48 +25,53 @@ export default function Login(props) {
       setIsLoading(false);
       return;
     }
-
-    try {
-      const response = await fetch("/api/signin", {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
-      const result = await response.json();
-
-      // props.setUser(result.user);
-      if (response.ok) {
-        toast("Logged in!", {
-          position: "top-center",
-          autoClose: 5000,
-          theme: "dark",
-        });
-        localStorage.setItem("userInfo", JSON.stringify(result));
-        navigate("/chats");
-      }
-
-      setIsLoading(false);
-    } catch (err) {
-      setIsLoading(false);
-
-      toast.error("Please enter correct email or password!", {
+    if (password.length < 6) {
+      toast.error("Password length should be atleast 6!", {
         autoClose: 5000,
         position: "bottom-right",
         theme: "dark",
       });
+      setIsLoading(false);
+      return;
     }
+    if (password != confirmPass) {
+      toast.warn("Password strings doesn't matches!", {
+        autoClose: 5000,
+        position: "bottom-right",
+        theme: "dark",
+      });
+      setIsLoading(false);
+      return;
+    }
+    let data = { name, email, password };
+
+    e.preventDefault();
+    const response = await fetch("/api/signup", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      toast("Signed Up!", {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "dark",
+      });
+      localStorage.setItem("userInfo", JSON.stringify(result));
+      setUser(result);
+      navigate("/chats");
+    }
+    setIsLoading(false);
   };
 
   return (
-    <section className="bg-gray-50 ">
-      <div className="absolute z-0 h-screen w-screen">
-        {mode === "dark" ? <BgDark /> : <Bg />}
-      </div>
-
+    <>
       <ToastContainer />
       <div className="relative z-10 flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
         {isLoading && (
@@ -99,9 +89,29 @@ export default function Login(props) {
         <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-              Sign in to your account
+              Create your account
             </h1>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <form className="flex flex-col gap-4">
+              <div>
+                <label
+                  htmlFor="name"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Your name
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  id="name"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="name"
+                  required=""
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                  }}
+                />
+              </div>
               <div>
                 <label
                   htmlFor="email"
@@ -142,6 +152,26 @@ export default function Login(props) {
                   }}
                 />
               </div>
+              <div>
+                <label
+                  htmlFor="confirmPassword"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Confirm Password
+                </label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  id="confirmPassword"
+                  placeholder="••••••••"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  required=""
+                  value={confirmPass}
+                  onChange={(e) => {
+                    setConfirmPass(e.target.value);
+                  }}
+                />
+              </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-start">
                   <div className="flex items-center h-5">
@@ -169,28 +199,25 @@ export default function Login(props) {
                   Forgot password?
                 </a>
               </div>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className={`w-full text-white ${
-                  isLoading ? "bg-blue-400 hover:bg-blue-400" : ""
-                } bg-blue-600 hover:bg-blue-800 duration-150 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center`}
+              <div
+                onClick={handleSubmit}
+                className="w-full text-white bg-blue-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
-                Sign in
-              </button>
-              <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                Don’t have an account yet?{" "}
-                <a
-                  href="/signup"
+                Sign Up
+              </div>
+              <div className="text-sm font-light text-gray-500 dark:text-gray-400 flex justify-between cursor-pointer">
+                <p>Already have an account?</p>
+                <div
+                  onClick={() => props.setPage(0)}
                   className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                 >
-                  Sign up
-                </a>
-              </p>
+                  Sign in
+                </div>
+              </div>
             </form>
           </div>
         </div>
       </div>
-    </section>
+    </>
   );
 }

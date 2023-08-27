@@ -10,11 +10,11 @@ const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      require: true,
+      required: true,
     },
     email: {
       type: String,
-      require: true,
+      required: true,
       unique: true,
       validate(val) {
         if (!validator.isEmail(val)) {
@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      require: true,
+      required: true,
       validate(val) {
         if (val.length < 6) {
           throw Error("Password too short!");
