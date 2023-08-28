@@ -46,7 +46,7 @@ export default function LeftBar(props) {
     };
 
     return (
-      <div className="w-[25vw] h-full">
+      <div className="md:w-[25vw] w-full h-full">
         <div className="text-center my-4">Add a new Chat</div>
         <div className="flex gap-2 justify-center px-4 mb-4">
           <input
@@ -67,7 +67,7 @@ export default function LeftBar(props) {
         {users.map((user, i) => {
           return (
             <div
-              className="flex justify-between px-4 border-b border-gray-400"
+              className="flex flex-col gap-2 text-sm px-4 border-b border-gray-400"
               key={i}
             >
               <div>{user.name}</div>

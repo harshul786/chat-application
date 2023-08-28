@@ -31,8 +31,8 @@ const ChatProvider = ({ children }) => {
       });
       const result = await response.json();
       if (response.ok && result.email) {
-        localStorage.setItem("userInfo", JSON.stringify(result.user));
-        setUser(result.user);
+        localStorage.setItem("userInfo", JSON.stringify(result));
+        setUser(result);
         navigate("/chats");
       }
 
@@ -50,7 +50,11 @@ const ChatProvider = ({ children }) => {
     // }
 
     if (cookies.Auth) {
-      if (!localStorage.getItem("userInfo")) getUser();
+      if (
+        !localStorage.getItem("userInfo") ||
+        localStorage.getItem("userInfo") === undefined
+      )
+        getUser();
       else return;
     } else {
       if (pathname == "/") {
