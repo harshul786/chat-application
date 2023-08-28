@@ -9,7 +9,7 @@ export default function Login(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { isUser, setUser } = ChatState();
+  const { user, setUser } = ChatState();
 
   const navigate = useNavigate();
 
@@ -48,8 +48,9 @@ export default function Login(props) {
           autoClose: 5000,
           theme: "dark",
         });
-        localStorage.setItem("userInfo", JSON.stringify(result));
-        setUser(result);
+        localStorage.setItem("userInfo", JSON.stringify(result.user));
+        setUser(result.user);
+
         navigate("/chats");
       }
 

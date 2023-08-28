@@ -4,6 +4,19 @@ const auth = require("../middleware/auth");
 const multer = require("multer");
 const User = require("../models/users");
 
+const upload = multer({
+  dest: "avatars",
+  limits: {
+    fileSize: 1000000,
+  },
+  fileFilter(req, file, cb) {
+    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+      return cb(new Error("Please upload correct format image!"));
+    }
+    cb(undefined, true);
+  },
+});
+
 // ----------- start Authentication/Authorization ------------------
 router.post("/signup", (req, res) => {
   const user = new User({
@@ -81,6 +94,17 @@ router.delete("/user-profile", auth, async (req, res) => {
     res.status(500).send();
   }
 });
+
+router.put("/reset-password", auth, async (req, res) => {
+  try {
+    req.user.password = req.body.password;
+    await req.user.save();
+    res.send("Password changed succesfully!");
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
 // ----------- end Authentication/Authorization ------------------
 
 router.get("/user-profile", auth, async (req, res) => {
@@ -88,17 +112,25 @@ router.get("/user-profile", auth, async (req, res) => {
   res.send(publicObject);
 });
 
-const upload = multer({
-  dest: "avatars",
-  limits: {
-    fileSize: 1000000,
-  },
-  fileFilter(req, file, cb) {
-    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-      return cb(new Error("Please upload correct format image!"));
+router.put("/edit-profile", auth, async (req, res) => {
+  try {
+    const updateFields = {};
+    if (req.body.name) {
+      updateFields.name = req.body.name;
     }
-    cb(undefined, true);
-  },
+    if (req.body.bio) {
+      updateFields.bio = req.body.bio;
+    }
+    if (req.body.email) {
+      updateFields.email = req.body.email;
+    }
+
+    await User.findByIdAndUpdate(req.user._id, updateFields);
+
+    res.send({ message: "Profile updated successfully" });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
 });
 
 router.post(

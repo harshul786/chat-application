@@ -6,8 +6,9 @@ import Loading from "../Components/Loading";
 const ChatContext = createContext();
 
 const ChatProvider = ({ children }) => {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedChat, setSelectedChat] = useState(-1);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -30,8 +31,8 @@ const ChatProvider = ({ children }) => {
       });
       const result = await response.json();
       if (response.ok && result.email) {
-        localStorage.setItem("userInfo", JSON.stringify(result));
-        setUser(result);
+        localStorage.setItem("userInfo", JSON.stringify(result.user));
+        setUser(result.user);
         navigate("/chats");
       }
 
@@ -44,6 +45,10 @@ const ChatProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    // if (localStorage.getItem("userInfo")) {
+    //   setUser(JSON.parse(localStorage.getItem("userInfo")));
+    // }
+
     if (cookies.Auth) {
       if (!localStorage.getItem("userInfo")) getUser();
       else return;
@@ -53,10 +58,13 @@ const ChatProvider = ({ children }) => {
       }
       navigate("/");
     }
+    console.log(user);
   });
 
   return (
-    <ChatContext.Provider value={{ user, setUser }}>
+    <ChatContext.Provider
+      value={{ user, setUser, selectedChat, setSelectedChat }}
+    >
       {isLoading === true && <Loading />}
       {children}
     </ChatContext.Provider>

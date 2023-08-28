@@ -22,6 +22,9 @@ const userSchema = new mongoose.Schema(
         }
       },
     },
+    bio: {
+      type: String,
+    },
     password: {
       type: String,
       required: true,
@@ -86,7 +89,6 @@ userSchema.statics.authenticateByCredentials = async (email, password) => {
 // middleware
 userSchema.pre("save", async function (next) {
   const user = this;
-
   if (user.isModified("password")) {
     try {
       user.password = await bcrypt.hash(user.password, 8);
