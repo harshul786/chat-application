@@ -31,8 +31,8 @@ const ChatProvider = ({ children }) => {
       });
       const result = await response.json();
       if (response.ok && result.email) {
-        localStorage.setItem("userInfo", JSON.stringify(result));
-        setUser(result);
+        localStorage.setItem("userInfo", JSON.stringify(result.user));
+        setUser(result.user);
         navigate("/chats");
       }
 

@@ -89,7 +89,7 @@ router.post("/signout-all", auth, async (req, res) => {
 router.delete("/user-profile", auth, async (req, res) => {
   try {
     await User.deleteOne({ _id: req.user._id });
-    res.send(req.user);
+    res.send({ user: req.user });
   } catch (e) {
     res.status(500).send();
   }
@@ -109,7 +109,7 @@ router.put("/reset-password", auth, async (req, res) => {
 
 router.get("/user-profile", auth, async (req, res) => {
   const publicObject = req.user.getPublicObject();
-  res.send(publicObject);
+  res.send({ user: publicObject });
 });
 
 router.put("/edit-profile", auth, async (req, res) => {

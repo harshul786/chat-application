@@ -48,8 +48,8 @@ export default function Login(props) {
           autoClose: 5000,
           theme: "dark",
         });
-        localStorage.setItem("userInfo", JSON.stringify(result));
-        setUser(result);
+        localStorage.setItem("userInfo", JSON.stringify(result.user));
+        setUser(result.user);
 
         navigate("/chats");
       }
