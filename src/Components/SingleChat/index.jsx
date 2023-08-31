@@ -56,9 +56,37 @@ const MeMessage = ({ messages }) => {
   );
 };
 
-export default function SingleChat({ chatId }) {
-  const chatBottomRef = useRef(null);
+function Chats({ groupedMessages }) {
   const { user } = ChatState();
+  const chatBottomRef = useRef(null);
+  useEffect(() => {
+    if (chatBottomRef.current && groupedMessages.length !== 0) {
+      chatBottomRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
+    }
+  }, [groupedMessages]);
+  return (
+    <div className="flex-1 overflow-y-scroll px-4 py-2 smooth-scroll">
+      {/* Render grouped chat messages */}
+      {groupedMessages.map((messageGroup, groupIndex) => {
+        const senderId = messageGroup[0].sender._id;
+
+        return senderId === user._id ? (
+          <MeMessage key={groupIndex} messages={messageGroup} />
+        ) : (
+          <YouMessage key={groupIndex} messages={messageGroup} />
+        );
+      })}
+      {groupedMessages.length !== 0 && (
+        <div className="scroll-target" ref={chatBottomRef} />
+      )}
+    </div>
+  );
+}
+
+export default function SingleChat({ chatId }) {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [chatName, setChatName] = useState(null);
@@ -114,9 +142,6 @@ export default function SingleChat({ chatId }) {
 
         if (response.ok) {
           setMessages((prevMessages) => [...prevMessages, result]);
-          if (chatBottomRef.current) {
-            chatBottomRef.current.scrollIntoView({ behavior: "smooth" });
-          }
         }
       } catch (error) {
         console.log(error);
@@ -133,16 +158,10 @@ export default function SingleChat({ chatId }) {
     setGroupMessages(groupConsecutiveMessages(messages));
   }, [messages]);
 
-  useEffect(() => {
-    if (chatBottomRef.current) {
-      chatBottomRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [chatBottomRef, groupedMessages]);
-
   if (isLoading) return <Loading />;
   else
     return (
-      <div className="flex flex-col w-full h-full relative">
+      <div className="flex flex-col w-full h-full ">
         <div
           className="h-16 bg-blue-500 text-white flex items-center px-4"
           key={chatName ? chatName : 101}
@@ -150,19 +169,7 @@ export default function SingleChat({ chatId }) {
           {chatName ? chatName : ""}
         </div>
 
-        <div className="flex-1 overflow-y-auto px-4 py-2 relative">
-          {/* Render grouped chat messages */}
-          {groupedMessages.map((messageGroup, groupIndex) => {
-            const senderId = messageGroup[0].sender._id;
-
-            return senderId === user._id ? (
-              <MeMessage key={groupIndex} messages={messageGroup} />
-            ) : (
-              <YouMessage key={groupIndex} messages={messageGroup} />
-            );
-          })}
-          <div className="absolute bottom-0" ref={chatBottomRef} />
-        </div>
+        <Chats groupedMessages={groupedMessages} />
 
         <div className="h-14 bg-white border-t border-gray-200 flex items-center px-4">
           <input

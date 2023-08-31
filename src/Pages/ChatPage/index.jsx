@@ -19,7 +19,7 @@ export default function ChatPage() {
       />
       <div
         className={`md:w-[75vw] w-screen ${
-          queryParams.get("id") !== undefined ? "block" : "md:block hidden"
+          queryParams.get("id") !== undefined ? "" : "md:block hidden"
         }  h-screen overflow-hidden relative `}
       >
         {queryParams.get("id") == undefined ? (

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import DefaultProfile from "../DefaultProfile";
 import Loading from "../Loading";
 import { ChatState } from "../../Context/chatProvider";
+import { useNavigate } from "react-router-dom";
 
 export default function Chats() {
   const [isLoading, setIsLoading] = useState(false);
@@ -10,6 +11,7 @@ export default function Chats() {
   const [search, setSearch] = useState("");
   const [filterSearch, setFilterSearch] = useState([]);
   const { user } = ChatState();
+  const navigate = useNavigate();
 
   const ChatFolder = (props) => {
     return (

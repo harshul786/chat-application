@@ -4,9 +4,14 @@ import Profile from "./Pages/Profile";
 import HomePage from "./Pages/HomePage";
 import ChatPage from "./Pages/ChatPage";
 import Loading from "./Components/Loading";
+import { useCookies } from "react-cookie";
 
 function App() {
   const [mode, setMode] = useState(null);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { pathname } = location;
+  const [cookies, setCookie, removeCookie] = useCookies(["Auth"]);
 
   useEffect(() => {
     // Function to check if the device is in dark mode
@@ -23,6 +28,16 @@ function App() {
       isDarkModeMediaQuery.removeEventListener("change", handleChange);
     };
   }, []);
+
+  useEffect(() => {
+    if (localStorage.getItem("userInfo") && cookies.Auth) {
+      if (pathname === "/") {
+        navigate("/chats");
+      }
+    } else {
+      navigate("/");
+    }
+  }, [cookies.Auth]);
 
   return (
     <>
