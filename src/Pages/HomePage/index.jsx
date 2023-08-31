@@ -6,12 +6,9 @@ import Bg from "../../images/bg";
 import BgDark from "../../images/bgdark";
 import Login from "../../Components/Login";
 import Signup from "../../Components/Signup";
-import { ChatState } from "../../Context/chatProvider";
-import { useNavigate } from "react-router-dom";
 
 export default function HomePage(props) {
   const [page, setPage] = useState(0);
-  const { user } = ChatState();
 
   return (
     <section className="bg-gray-50 ">
