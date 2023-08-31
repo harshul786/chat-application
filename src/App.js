@@ -29,15 +29,15 @@ function App() {
     };
   }, []);
 
-  useEffect(() => {
-    if (localStorage.getItem("userInfo") && cookies.Auth) {
-      if (pathname === "/") {
-        navigate("/chats");
-      }
-    } else {
-      navigate("/");
-    }
-  }, [cookies.Auth]);
+  // useEffect(() => {
+  //   if (localStorage.getItem("userInfo") && cookies.Auth) {
+  //     if (pathname === "/") {
+  //       navigate("/chats");
+  //     }
+  //   } else {
+  //     navigate("/");
+  //   }
+  // }, [cookies.Auth]);
 
   return (
     <>
