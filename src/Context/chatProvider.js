@@ -55,7 +55,7 @@ const ChatProvider = ({ children }) => {
         return;
       }
     }
-  });
+  }, []);
 
   return (
     <ChatContext.Provider

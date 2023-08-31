@@ -147,12 +147,12 @@ export default function Login(props) {
                     </label>
                   </div>
                 </div>
-                <a
-                  href="/reset-passowrd"
+                <div
+                  // href="/reset-passowrd"
                   className="text-sm font-medium text-primary-600 hover:underline dark:text-white"
                 >
                   Forgot password?
-                </a>
+                </div>
               </div>
               <button
                 type="submit"
