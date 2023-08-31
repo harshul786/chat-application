@@ -9,6 +9,7 @@ const path = require("path");
 const socketio = require("socket.io");
 const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
+const messageRoutes = require("./routes/messageRoutes");
 
 require("./mongoose/index").connect();
 
@@ -29,6 +30,7 @@ const io = socketio(server, {
 
 app.use("/api/", userRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/api/message", messageRoutes);
 
 // ------------------ Deployment ----------------------
 

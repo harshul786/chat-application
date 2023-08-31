@@ -6,9 +6,9 @@ import Loading from "../Components/Loading";
 const ChatContext = createContext();
 
 const ChatProvider = ({ children }) => {
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedChat, setSelectedChat] = useState(-1);
+  const [selectedChat, setSelectedChat] = useState(null);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -45,24 +45,16 @@ const ChatProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    // if (localStorage.getItem("userInfo")) {
-    //   setUser(JSON.parse(localStorage.getItem("userInfo")));
-    // }
-
-    if (cookies.Auth) {
-      if (
-        !localStorage.getItem("userInfo") ||
-        localStorage.getItem("userInfo") === undefined
-      )
+    if (!user) {
+      if (localStorage.getItem("userInfo")) {
+        setUser(JSON.parse(localStorage.getItem("userInfo")));
+      } else if (cookies.Auth) {
         getUser();
-      else return;
-    } else {
-      if (pathname == "/") {
+      } else {
+        navigate("/");
         return;
       }
-      navigate("/");
     }
-    console.log(user);
   });
 
   return (

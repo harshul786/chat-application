@@ -6,7 +6,7 @@ import { Dna } from "react-loader-spinner";
 import { ChatState } from "../../Context/chatProvider";
 
 export default function Signup(props) {
-  const { isUser, setUser } = ChatState();
+  const { user, setUser } = ChatState();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -63,8 +63,8 @@ export default function Signup(props) {
         autoClose: 5000,
         theme: "dark",
       });
-      localStorage.setItem("userInfo", JSON.stringify(result));
-      setUser(result);
+      localStorage.setItem("userInfo", JSON.stringify(result.user));
+      setUser(result.user);
       navigate("/chats");
     }
     setIsLoading(false);

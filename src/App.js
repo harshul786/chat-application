@@ -4,7 +4,6 @@ import Profile from "./Pages/Profile";
 import HomePage from "./Pages/HomePage";
 import ChatPage from "./Pages/ChatPage";
 import Loading from "./Components/Loading";
-import Layout from "./Pages/Layout";
 
 function App() {
   const [mode, setMode] = useState(null);
@@ -32,14 +31,7 @@ function App() {
           path="/"
           element={mode === null ? <Loading /> : <HomePage mode={mode} />}
         />
-        <Route
-          path="/chats"
-          element={
-            <Layout>
-              <ChatPage />
-            </Layout>
-          }
-        />
+        <Route path="/chats" element={<ChatPage />} />
       </Routes>
     </>
   );

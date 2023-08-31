@@ -28,7 +28,7 @@ const accessChat = async (req, res) => {
     if (isChat.length > 0) {
       res.send(isChat[0]);
     } else {
-      let chatData = {
+      var chatData = {
         chatName: "sender",
         isGroupChat: false,
         users: [req.user._id, userId],
@@ -36,19 +36,28 @@ const accessChat = async (req, res) => {
 
       try {
         const createdChat = await Chat.create(chatData);
-
-        const fullChat = await Chat.findOne({
-          _id: createdChat._id,
-        }).populate("users", "-password -tokens");
-
-        res.send(fullChat);
-      } catch (e) {
+        const FullChat = await Chat.findOne({ _id: createdChat._id }).populate(
+          "users",
+          "-password"
+        );
+        res.status(200).json(FullChat);
+      } catch (error) {
         res.status(400);
-        throw new Error(e);
+        throw new Error(error.message);
       }
     }
-  } catch (err) {
-    res.status(404).send(err);
+  } catch (error) {
+    console.log(error);
+    if (error.name === "MongoServerError" && error.code === 11000) {
+      res.send({
+        status: 400,
+        message: "Duplicate key error: User already exists.",
+      });
+    } else {
+      res
+        .status(500)
+        .json({ message: "An error occurred while processing your request." });
+    }
   }
 };
 
@@ -181,6 +190,15 @@ const removeFromGroup = async (req, res) => {
   }
 };
 
+const cleanIndexes = async (req, res) => {
+  try {
+    await Chat.cleanIndexes();
+    res.send("ok!");
+  } catch (error) {
+    res.send(error);
+  }
+};
+
 module.exports = {
   accessChat,
   fetchChats,
@@ -188,4 +206,5 @@ module.exports = {
   renameGroup,
   addToGroup,
   removeFromGroup,
+  cleanIndexes,
 };

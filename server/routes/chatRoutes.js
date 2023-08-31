@@ -7,6 +7,7 @@ const {
   renameGroup,
   addToGroup,
   removeFromGroup,
+  cleanIndexes,
 } = require("../controllers/chatController");
 const router = express.Router();
 
@@ -18,5 +19,6 @@ router.post("/create-group", createGroupChat);
 router.put("/rename-group", renameGroup);
 router.put("/add-to-group", addToGroup);
 router.delete("/remove-from-group", removeFromGroup);
+router.delete("/clean-indexes", cleanIndexes);
 
 module.exports = router;

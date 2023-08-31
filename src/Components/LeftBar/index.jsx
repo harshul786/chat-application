@@ -7,6 +7,7 @@ import Loading from "../Loading";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Profile from "../Profile";
+import { useNavigate } from "react-router-dom";
 
 export default function LeftBar(props) {
   const [selected, setSelected] = useState(0);
@@ -16,6 +17,7 @@ export default function LeftBar(props) {
     const [searchUsers, setSearchUsers] = useState("");
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
     const handleSearchUsers = async () => {
       setIsLoading(true);
@@ -33,6 +35,40 @@ export default function LeftBar(props) {
 
         if (response.ok) {
           setUsers(result);
+        }
+        setIsLoading(false);
+      } catch (error) {
+        toast.error("error", {
+          position: "top-left",
+          autoClose: 5000,
+          theme: "dark",
+        });
+        setIsLoading(false);
+      }
+    };
+
+    const createNewChat = async (id) => {
+      try {
+        setIsLoading(true);
+        const response = await fetch("/api/chat/access", {
+          method: "POST",
+          body: JSON.stringify({ userId: id }),
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
+
+        if (response.ok) {
+          toast.success("Chat Created!", {
+            position: "top-left",
+            autoClose: 5000,
+            theme: "dark",
+          });
+          setIsOpen(false);
+          navigate(`/chats?id=${id}`);
+          window.location.reload();
         }
         setIsLoading(false);
       } catch (error) {
@@ -64,14 +100,21 @@ export default function LeftBar(props) {
             Go
           </button>
         </div>
+
         {users.map((user, i) => {
           return (
             <div
-              className="flex flex-col gap-2 text-sm px-4 border-b border-gray-400"
+              className="flex items-center gap-2 text-sm px-2 mx-3 py-4 border-b border-gray-400"
               key={i}
+              onClick={() => createNewChat(user._id)}
             >
-              <div>{user.name}</div>
-              <div>{user.email}</div>
+              <div>
+                <DefaultProfile height="28px" width="28px" size="20" />
+              </div>
+              <div className="w-[85%]">
+                <div className="font-semibold truncate">{user.name}</div>
+                <div className="truncate">{user.email}</div>
+              </div>
             </div>
           );
         })}
@@ -80,7 +123,9 @@ export default function LeftBar(props) {
   }
 
   return (
-    <div className="md:w-[25vw] w-full flex flex-col justify-between border-r-[1px] border-gray-200 dark:text-white relative">
+    <div
+      className={`${props.customClass} md:w-[25vw] w-full flex flex-col justify-between border-r-[1px] border-gray-200 dark:text-white relative`}
+    >
       <section
         className={`z-[9] absolute left-0 top-0 h-screen w-full bg-white dark:bg-slate-800 shadow-2xl transition-transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
@@ -107,7 +152,7 @@ export default function LeftBar(props) {
 
         {selected == 0 ? <Chats /> : <Profile />}
       </div>
-      <div className="h-16 border-r border-t-[1px] border-gray-200 bg-white dark:bg-gray-950 transition-colors flex justify-around items-center px-4 fixed z-50 md:w-[25vw] w-full bottom-0">
+      <div className="h-14 border-r border-t-[1px] border-gray-200 bg-white dark:bg-gray-950 transition-colors flex justify-around items-center px-4 fixed z-50 md:w-[25vw] w-full bottom-0">
         <DefaultProfile
           onclick={() => {
             setIsOpen(false);
