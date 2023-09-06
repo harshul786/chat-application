@@ -4,6 +4,8 @@ import { ChatState } from "../../Context/chatProvider";
 import { BsFillCaretLeftFill } from "react-icons/bs";
 import DefaultProfile from "../DefaultProfile";
 import Loading from "../Loading";
+import io from "socket.io-client";
+var socket, selectedChatCompare;
 
 const YouMessage = ({ messages }) => {
   return (
@@ -92,6 +94,24 @@ export default function SingleChat({ chatId }) {
   const [chatName, setChatName] = useState(null);
   const [newMessage, setNewMessage] = useState("");
   const [groupedMessages, setGroupMessages] = useState([]);
+  const [socketConnection, setSocketConnection] = useState(false);
+  const [sendNewMessage, setSendNewMessage] = useState(null);
+  const { user } = ChatState();
+
+  useEffect(() => {
+    socket = io();
+    if (user) {
+      socket.emit("setup", user);
+      socket.on("connected", () => {
+        setSocketConnection(true);
+      });
+    }
+    return () => {
+      if (socket) {
+        socket.disconnect();
+      }
+    };
+  }, [user, socket]);
 
   const getMessages = async () => {
     try {
@@ -110,10 +130,11 @@ export default function SingleChat({ chatId }) {
         setMessages(result.messages);
         setChatName(result.chatName);
       } else {
-        console.error("Request failed:", response.status, response.statusText);
+        console.error("Fetch error:", response.status);
       }
 
       setIsLoading(false);
+      socket.emit("join chat", chatId);
     } catch (err) {
       setIsLoading(false);
       console.error("Fetch error:", err);
@@ -124,7 +145,26 @@ export default function SingleChat({ chatId }) {
     getMessages();
   }, []);
 
-  const sendMessage = async (event) => {
+  useEffect(() => {
+    if (socket) {
+      socket.on("message recieved", (messageRecieved) => {
+        if (!chatId || chatId != messageRecieved.chat._id) {
+          // give notifi
+        } else {
+          setMessages((prevMessages) => [...prevMessages, messageRecieved]);
+        }
+      });
+    }
+  }, [socket]);
+
+  useEffect(() => {
+    if (sendNewMessage && socket) {
+      socket.emit("new message", sendNewMessage);
+      setSendNewMessage(null);
+    }
+  }, [sendNewMessage]);
+
+  var sendMessage = async (event) => {
     if (event.key === "Enter" && newMessage.length > 0) {
       event.preventDefault();
       try {
@@ -141,6 +181,9 @@ export default function SingleChat({ chatId }) {
         const result = await response.json();
 
         if (response.ok) {
+          setSendNewMessage(result);
+          // socket.emit("new message", result);
+
           setMessages((prevMessages) => [...prevMessages, result]);
         }
       } catch (error) {
@@ -151,7 +194,6 @@ export default function SingleChat({ chatId }) {
 
   const typingHandler = (e) => {
     setNewMessage(e.target.value);
-    console.log(newMessage);
   };
 
   useEffect(() => {

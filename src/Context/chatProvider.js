@@ -45,9 +45,16 @@ const ChatProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (!user) {
+    console.log(user, "chatProvider");
+    if (user === null) {
       if (localStorage.getItem("userInfo")) {
-        setUser(JSON.parse(localStorage.getItem("userInfo")));
+        console.log(
+          "localStorage",
+          JSON.parse(localStorage.getItem("userInfo"))
+        );
+        setUser(JSON.parse(localStorage.getItem("userInfo")), (cuur) =>
+          console.log(cuur, "user")
+        );
       } else if (cookies.Auth) {
         getUser();
       } else {
@@ -55,7 +62,7 @@ const ChatProvider = ({ children }) => {
         return;
       }
     }
-  }, []);
+  }, [user]);
 
   return (
     <ChatContext.Provider

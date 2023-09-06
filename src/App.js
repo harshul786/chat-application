@@ -5,6 +5,7 @@ import HomePage from "./Pages/HomePage";
 import ChatPage from "./Pages/ChatPage";
 import Loading from "./Components/Loading";
 import { useCookies } from "react-cookie";
+import { ChatState } from "./Context/chatProvider";
 
 function App() {
   const [mode, setMode] = useState(null);
@@ -12,6 +13,7 @@ function App() {
   const navigate = useNavigate();
   const { pathname } = location;
   const [cookies, setCookie, removeCookie] = useCookies(["Auth"]);
+  const { user, setUser } = ChatState();
 
   useEffect(() => {
     // Function to check if the device is in dark mode
@@ -29,15 +31,17 @@ function App() {
     };
   }, []);
 
-  // useEffect(() => {
-  //   if (localStorage.getItem("userInfo") && cookies.Auth) {
-  //     if (pathname === "/") {
-  //       navigate("/chats");
-  //     }
-  //   } else {
-  //     navigate("/");
-  //   }
-  // }, [cookies.Auth]);
+  useEffect(() => {
+    if (cookies.Auth) {
+      if (pathname === "/") {
+        navigate("/chats");
+      }
+    } else {
+      if (pathname !== "/") {
+        navigate("/");
+      }
+    }
+  }, [cookies.Auth]);
 
   return (
     <>

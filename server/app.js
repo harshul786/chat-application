@@ -20,10 +20,7 @@ app.use(express.json());
 dotenv.config();
 const server = http.createServer(app);
 const io = socketio(server, {
-  pingTimeout: 60000,
-  cors: {
-    origin: "http://localhost:3000",
-  },
+  pingTimeout: 600000,
 });
 
 // ------------------ Chat APIs ----------------------
@@ -42,15 +39,32 @@ app.get("*", (req, res) => {
 
 // ------------------ Deployment ----------------------
 
-var count = 0;
-
 io.on("connection", (socket) => {
-  console.log("New Socket.io Connection! ");
+  console.log("New Socket.io Connection! ", socket.connected);
 
-  socket.emit("countUpdate", count);
-  socket.on("increment", () => {
-    count++;
-    socket.emit("countUpdate", count);
+  socket.on("setup", (userData) => {
+    socket.join(userData._id);
+    console.log(userData._id);
+    socket.emit("connected");
+  });
+
+  socket.on("join chat", (room) => {
+    socket.join(room);
+    console.log("user joined room: " + room);
+  });
+
+  socket.on("new message", (newMessageRecieved) => {
+    var chat = newMessageRecieved.chat;
+
+    console.log("new message recieved call");
+
+    if (!chat || !chat?.users) return console.log("chat.users not defined");
+
+    chat.users.forEach((user) => {
+      if (user._id == newMessageRecieved.sender._id) return;
+
+      socket.in(user._id).emit("message recieved", newMessageRecieved);
+    });
   });
 });
 

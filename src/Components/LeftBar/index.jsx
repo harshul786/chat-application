@@ -60,6 +60,8 @@ export default function LeftBar(props) {
           credentials: "include",
         });
 
+        const result = await response.json();
+
         if (response.ok) {
           toast.success("Chat Created!", {
             position: "top-left",
@@ -67,7 +69,8 @@ export default function LeftBar(props) {
             theme: "dark",
           });
           setIsOpen(false);
-          navigate(`/chats?id=${id}`);
+          console.log(response);
+          navigate(`/chats?id=${result._id}`);
           window.location.reload();
         }
         setIsLoading(false);

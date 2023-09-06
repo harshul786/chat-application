@@ -27,7 +27,7 @@ export default function ChatPage() {
             Select a Chat to start messaging!
           </div>
         ) : (
-          <SingleChat chatId={queryParams.get("id")} />
+          <SingleChat chatId={queryParams.get("id")} user={user} />
         )}
       </div>
     </div>
