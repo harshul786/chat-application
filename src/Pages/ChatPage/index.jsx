@@ -17,19 +17,24 @@ export default function ChatPage() {
       <LeftBar
         customClass={`${queryParams.get("id") ? "md:flex hidden" : ""}`}
       />
-      <div
-        className={`md:w-[75vw] w-screen ${
-          queryParams.get("id") !== undefined ? "" : "md:block hidden"
-        }  h-screen overflow-hidden relative `}
-      >
-        {queryParams.get("id") == undefined ? (
-          <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 py-1 px-4 bg-slate-100 dark:bg-slate-400 rounded-3xl w-max text-sm">
+
+      {!queryParams.get("id") ? (
+        <div
+          className={`md:w-[75vw] w-screen md:flex hidden h-screen overflow-hidden relative `}
+        >
+          <div
+            className={` absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 py-1 px-4 bg-slate-100 dark:bg-slate-400 rounded-3xl w-max text-sm`}
+          >
             Select a Chat to start messaging!
           </div>
-        ) : (
+        </div>
+      ) : (
+        <div
+          className={`md:w-[75vw] w-screen h-screen overflow-hidden relative `}
+        >
           <SingleChat chatId={queryParams.get("id")} user={user} />
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

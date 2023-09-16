@@ -14,6 +14,35 @@ function App() {
   const { pathname } = location;
   const [cookies, setCookie, removeCookie] = useCookies(["Auth"]);
   const { user, setUser } = ChatState();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const getUser = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch("/api/user-profile", {
+        method: "GET",
+        //   body: JSON.stringify(data),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "https://chatnexa.onrender.com/",
+        },
+        credentials: "include",
+      });
+      const result = await response.json();
+      if (response.ok && result.email) {
+        localStorage.setItem("userInfo", JSON.stringify(result.user));
+        setUser(result.user);
+        navigate("/chats");
+      }
+
+      setIsLoading(false);
+    } catch (err) {
+      setIsLoading(false);
+      console.log(err);
+      return;
+    }
+  };
 
   useEffect(() => {
     // Function to check if the device is in dark mode
@@ -42,6 +71,12 @@ function App() {
       }
     }
   }, [cookies.Auth]);
+
+  useEffect(() => {
+    if (cookies.Auth) {
+      getUser();
+    }
+  }, [pathname]);
 
   return (
     <>

@@ -52,9 +52,7 @@ const ChatProvider = ({ children }) => {
           "localStorage",
           JSON.parse(localStorage.getItem("userInfo"))
         );
-        setUser(JSON.parse(localStorage.getItem("userInfo")), (cuur) =>
-          console.log(cuur, "user")
-        );
+        setUser(JSON.parse(localStorage.getItem("userInfo")));
       } else if (cookies.Auth) {
         getUser();
       } else {

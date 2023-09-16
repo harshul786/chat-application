@@ -1,6 +1,33 @@
 const Chat = require("../models/chats");
 const User = require("../models/users");
 
+const chatObject = async (req, res) => {
+  const { chatId } = req.body;
+  if (!chatId) {
+    console.log("chatId not sent with request!");
+    return res.status(400).send();
+  }
+
+  try {
+    let isChat = await Chat.findById(chatId)
+      .populate("users", "-password -tokens")
+      .populate("latestMessage");
+
+    isChat = await User.populate(isChat, {
+      path: "latestMessage.sender",
+      select: "name email avatar",
+    });
+
+    if (isChat) {
+      res.send(isChat);
+    } else {
+      throw new Error("Chat not found!");
+    }
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+};
+
 const accessChat = async (req, res) => {
   const { userId } = req.body;
 
@@ -84,7 +111,7 @@ const createGroupChat = async (req, res) => {
   if (!req.body.users || !req.body.name) {
     return res.status(400).send({ error: "Please fill all the fields!" });
   }
-  let users = JSON.parse(req.body.users);
+  let { users } = req.body;
 
   if (users.length < 2) {
     return res
@@ -201,6 +228,7 @@ const cleanIndexes = async (req, res) => {
 
 module.exports = {
   accessChat,
+  chatObject,
   fetchChats,
   createGroupChat,
   renameGroup,

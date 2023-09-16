@@ -16,15 +16,28 @@ export default function Chats() {
   const ChatFolder = (props) => {
     return (
       <a
-        className="flex p-2 items-center border-b-[1px] border-gray-200 w-[96%] cursor-pointer hover:bg-slate-200 duration-150"
+        className="flex p-2 items-center border-b-[1px] border-gray-200 w-[96%] cursor-pointer hover:bg-slate-200 dark:hover:text-black duration-150"
         href={props.link}
         onClick={() => setSelectedChat(props.name)}
       >
-        <DefaultProfile height="40px" width="40px" size="30" />
+        {props.chat?.avatar ? (
+          <div className="w-10 h-10 overflow-hidden rounded-full relative">
+            <img
+              src={props.chat.avatar}
+              alt="avatar"
+              className="h-full w-auto object-cover absolute top-0 left-1/2 -translate-x-1/2"
+            />
+          </div>
+        ) : (
+          <DefaultProfile height="40px" width="40px" size="30" />
+        )}
+
         <div className="flex flex-col px-2">
           <div className="font-semibold text-sm">{props.name}</div>
           <div className="text-xs">
-            {props.latestMessage.slice(0, 20) + "..."}
+            {props.latestMessage.length > 20
+              ? props.latestMessage.slice(0, 20) + "..."
+              : props.latestMessage}
           </div>
         </div>
       </a>
@@ -116,7 +129,16 @@ export default function Chats() {
                     ? chat.users[1].name
                     : chat.users[0].name
                 }
-                latestMessage="I am sexy and I know it!"
+                chat={
+                  chat.isGroupChat
+                    ? null
+                    : chat.users[0].name === user.name
+                    ? chat.users[1]
+                    : chat.users[0]
+                }
+                latestMessage={
+                  chat.latestMessage?.content ? chat.latestMessage.content : ""
+                }
                 link={`/chats?id=${chat._id}`}
               />
             );

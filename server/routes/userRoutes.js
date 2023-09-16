@@ -5,9 +5,8 @@ const multer = require("multer");
 const User = require("../models/users");
 
 const upload = multer({
-  dest: "avatars",
   limits: {
-    fileSize: 1000000,
+    fileSize: 1024 * 1024,
   },
   fileFilter(req, file, cb) {
     if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
@@ -16,6 +15,18 @@ const upload = multer({
     cb(undefined, true);
   },
 });
+// {
+//   dest: "avatars",
+//   limits: {
+//     fileSize: 1024 * 1024,
+//   },
+//   fileFilter(req, file, cb) {
+//     if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+//       return cb(new Error("Please upload correct format image!"));
+//     }
+//     cb(undefined, true);
+//   },
+// });
 
 // ----------- start Authentication/Authorization ------------------
 router.post("/signup", (req, res) => {
@@ -138,9 +149,16 @@ router.post(
   auth,
   upload.single("avatar"),
   async (req, res) => {
-    req.user.avatar = req.file.buffer;
+    const avatarBinaryData = req.file.buffer;
+    const base64Image = avatarBinaryData.toString("base64");
+
+    // Create a data URL for the image
+    const imageSrc = `data:image/jpeg;base64,${base64Image}`;
+
+    req.user.avatar = imageSrc;
+
     await req.user.save();
-    res.send();
+    res.send({ message: "Avatar uploaded successfully!", img: imageSrc });
   },
   (error, req, res, next) => {
     res.status(400).send({ error: error.message });
@@ -151,6 +169,18 @@ router.post("/delete-avatar", auth, async (req, res) => {
   req.user.avatar = undefined;
   await req.user.save();
   res.send();
+});
+
+router.get("/avatars/fetch", async (req, res) => {
+  const { userId } = req.body;
+  try {
+    const userData = await User.findById(userId);
+    const imageSrc = userData.avatar;
+
+    res.send({ img: imageSrc });
+  } catch (err) {
+    res.status(404).send(err.message);
+  }
 });
 
 // ------------------ Chat APIs ----------------------

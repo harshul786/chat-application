@@ -11,6 +11,61 @@ export default function Profile() {
   const [changesMade, setChangesMade] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const openFileInput = () => {
+    document.getElementById("avatar").click();
+  };
+
+  const handleImageUpload = async (event) => {
+    const file = event.target.files[0];
+    console.log(file);
+    if (file?.size > 1024 * 1024) {
+      toast.error("Please Upload file of less than 1MB", {
+        position: "bottom-left",
+        autoClose: 5000,
+        theme: "dark",
+      });
+    } else if (file) {
+      try {
+        const formData = new FormData();
+        formData.append("avatar", file);
+        const response = await fetch("/api/upload-avatar", {
+          method: "POST",
+          body: formData,
+
+          credentials: "include",
+        });
+        const responseData = await response.json();
+        if (response.ok) {
+          toast("Avatar Uploaded!", {
+            position: "bottom-left",
+            autoClose: 5000,
+            theme: "dark",
+          });
+          setUser({ ...user, avatar: responseData.img });
+          localStorage.setItem(
+            "userInfo",
+            localStorage
+              .getItem("userInfo")
+              .replace(user.avatar, responseData.img)
+          );
+          console.log(localStorage.getItem("userInfo"));
+        } else {
+          toast.error(responseData.error, {
+            position: "bottom-left",
+            autoClose: 5000,
+            theme: "dark",
+          });
+        }
+      } catch (error) {
+        toast.error("Error uploading avatar.", {
+          position: "bottom-left",
+          autoClose: 5000,
+          theme: "dark",
+        });
+      }
+    }
+  };
+
   const handleNameChange = (e) => {
     setUnsavedUser({ ...unsavedUser, name: e.target.value });
     setChangesMade(true);
@@ -93,12 +148,35 @@ export default function Profile() {
   };
 
   return (
-    <div className="flex flex-col w-full h-[93vh] overflow-y-scroll dark:text-white">
+    <div className="flex flex-col w-full dark:text-white">
       <ToastContainer />
       {isLoading && <Loading />}
       <div className="mt-4 block ml-auto mr-auto">
-        <DefaultProfile height="100px" width="100px" size="60" />
-        <div className="text-center mt-3 text-sm text-blue-500">{"Edit"}</div>
+        {user.avatar ? (
+          <div className="w-24 h-24 overflow-hidden rounded-full relative">
+            <img
+              src={user.avatar}
+              alt="avatar"
+              className="h-full w-auto object-cover absolute top-0 left-1/2 -translate-x-1/2"
+            />
+          </div>
+        ) : (
+          <DefaultProfile height="100px" width="100px" size="60" />
+        )}
+        <input
+          type="file"
+          id="avatar"
+          name="avatar"
+          accept="image/*"
+          style={{ display: "none" }}
+          onChange={handleImageUpload}
+        />
+        <div
+          className="text-center mt-3 text-sm text-blue-500"
+          onClick={openFileInput}
+        >
+          {"Edit"}
+        </div>
       </div>
       <div className="mt-4 mx-4 text-sm flex flex-col gap-5">
         <section>
