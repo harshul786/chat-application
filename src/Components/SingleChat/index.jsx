@@ -8,7 +8,6 @@ import io from "socket.io-client";
 var socket, selectedChatCompare;
 
 const YouMessage = ({ messages }) => {
-  console.log(messages);
   return (
     <div className="my-2 ml-10 flex flex-col gap-2">
       {messages.map((message, index) => (
@@ -124,7 +123,6 @@ export default function SingleChat({ chatId }) {
       });
       socket.on("typing", (userName) => {
         setWhoTyping(userName);
-        console.log(userName + "is typing");
         setIsTyping(true);
       });
       socket.on("stop typing", (userName) => {
@@ -155,14 +153,13 @@ export default function SingleChat({ chatId }) {
         setMessages(result.messages);
         setChatName(result.chatName);
       } else {
-        console.error("Fetch error:", response.status);
+        // err
       }
 
       setIsLoading(false);
       socket.emit("join chat", chatId);
     } catch (err) {
       setIsLoading(false);
-      console.error("Fetch error:", err);
     }
   };
 
@@ -246,7 +243,6 @@ export default function SingleChat({ chatId }) {
 
   useEffect(() => {
     setGroupMessages(groupConsecutiveMessages(messages));
-    console.log(messages);
   }, [messages]);
 
   if (isLoading) return <Loading />;
