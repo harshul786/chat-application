@@ -92,7 +92,7 @@ export default function SingleChat({ chatId }) {
           block: "end",
         });
       }
-    }, []);
+    }, [messages.length]);
 
     return (
       <div className="flex-1 overflow-y-scroll px-4 py-2 smooth-scroll">
