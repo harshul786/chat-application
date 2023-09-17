@@ -222,6 +222,7 @@ export default function SingleChat({ chatId }) {
   };
 
   const typingHandler = (e) => {
+    e.preventDefault();
     setNewMessage(e.target.value);
 
     if (!socketConnection) return;
@@ -279,7 +280,7 @@ export default function SingleChat({ chatId }) {
 
         <div className="h-14 bg-white dark:bg-gray-950 border-t border-gray-200 flex items-center px-4">
           <input
-            className="w-full py-2 px-4 dark:bg-gray-900 dark:text-white dark:!border-0 border rounded-md focus:outline-none focus:ring focus:border-blue-500"
+            className="w-full touch-manipulation py-2 px-4 dark:bg-gray-900 dark:text-white dark:!border-0 border rounded-md focus:outline-none focus:ring focus:border-blue-500"
             placeholder="Type your message..."
             onChange={typingHandler}
             value={newMessage}
