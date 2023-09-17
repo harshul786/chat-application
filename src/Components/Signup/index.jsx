@@ -73,7 +73,7 @@ export default function Signup(props) {
   return (
     <>
       <ToastContainer />
-      <div className="relative z-10 flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+      <div className="relative z-10 flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen h-[90vh] lg:py-0">
         {isLoading && (
           <div className="p-10 bg-black/25 rounded-2xl absolute -translate-x-1/2 left-1/2 top-1/2 -translate-y-1/2">
             <Dna

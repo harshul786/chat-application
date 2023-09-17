@@ -251,7 +251,7 @@ export default function SingleChat({ chatId }) {
   if (isLoading) return <Loading />;
   else
     return (
-      <div className="flex flex-col w-full h-full ">
+      <div className="flex flex-col w-full md:h-screen h-[90vh]">
         <div className="h-16 relative flex flex-col justify-center bg-blue-500 text-white items-left px-4">
           <div
             className={`text-base absolute transition-all  ${

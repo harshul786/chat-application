@@ -410,14 +410,14 @@ export default function LeftBar(props) {
     >
       <ToastContainer />
       <section
-        className={`z-[9] absolute dark:text-black left-0 top-0 h-screen w-full bg-white dark:bg-slate-800 shadow-2xl transition-transform ${
+        className={`z-[9] absolute dark:text-black left-0 top-0 md:h-screen h-[90vh] w-full bg-white dark:bg-slate-800 shadow-2xl transition-transform ${
           selectedChatOption === 1 ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <SearchDrawer />
       </section>
       <section
-        className={`z-[9] absolute dark:text-black left-0 top-0 h-screen w-full bg-white dark:bg-slate-800 shadow-2xl transition-transform ${
+        className={`z-[9] absolute dark:text-black left-0 top-0 md:h-screen h-[90vh] w-full bg-white dark:bg-slate-800 shadow-2xl transition-transform ${
           selectedChatOption === 2 ? "translate-x-0" : "-translate-x-full"
         }`}
       >

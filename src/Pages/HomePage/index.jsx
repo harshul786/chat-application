@@ -12,7 +12,7 @@ export default function HomePage(props) {
 
   return (
     <section className="bg-gray-50 ">
-      <div className="absolute z-0 h-screen w-screen overflow-hidden">
+      <div className="absolute z-0 md:h-screen h-[90vh] w-screen overflow-hidden">
         {props.mode ? <BgDark /> : <Bg />}
       </div>
       {page === 0 ? (
