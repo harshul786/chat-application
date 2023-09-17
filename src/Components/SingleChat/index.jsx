@@ -14,7 +14,7 @@ export default function SingleChat({ chatId }) {
   const [groupedMessages, setGroupMessages] = useState([]);
   const [socketConnection, setSocketConnection] = useState(false);
   const [sendNewMessage, setSendNewMessage] = useState(null);
-  const { user } = ChatState();
+  const { user, notifications, setNotifications } = ChatState();
   const [typing, setTyping] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [whoTyping, setWhoTyping] = useState(null);
@@ -77,6 +77,12 @@ export default function SingleChat({ chatId }) {
       socket.on("message recieved", (messageRecieved) => {
         if (!chatId || chatId != messageRecieved.chat._id) {
           // give notifi
+          if (!notifications.includes(messageRecieved)) {
+            setNotifications((prevNotifications) => [
+              messageRecieved,
+              ...prevNotifications,
+            ]);
+          }
         } else {
           setMessages((prevMessages) => [...prevMessages, messageRecieved]);
         }

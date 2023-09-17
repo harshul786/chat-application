@@ -9,6 +9,7 @@ const ChatProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedChat, setSelectedChat] = useState(null);
+  const [notifications, setNotifications] = useState([]);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -64,7 +65,14 @@ const ChatProvider = ({ children }) => {
 
   return (
     <ChatContext.Provider
-      value={{ user, setUser, selectedChat, setSelectedChat }}
+      value={{
+        user,
+        setUser,
+        selectedChat,
+        setSelectedChat,
+        notifications,
+        setNotifications,
+      }}
     >
       {isLoading === true && <Loading />}
       {children}

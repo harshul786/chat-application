@@ -3,6 +3,7 @@ import DefaultProfile from "../DefaultProfile";
 import Loading from "../Loading";
 import { ChatState } from "../../Context/chatProvider";
 import { useNavigate } from "react-router-dom";
+import { IoIosNotifications } from "react-icons/io";
 
 export default function Chats() {
   const [isLoading, setIsLoading] = useState(false);
@@ -10,7 +11,8 @@ export default function Chats() {
   const { selectedChat, setSelectedChat } = ChatState();
   const [search, setSearch] = useState("");
   const [filterSearch, setFilterSearch] = useState([]);
-  const { user } = ChatState();
+  const { user, notifications, setNotifications } = ChatState();
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const navigate = useNavigate();
 
   const ChatFolder = (props) => {
@@ -92,7 +94,66 @@ export default function Chats() {
   };
 
   return (
-    <div className="">
+    <div className="relative">
+      <div className="absolute -top-10 left-4">
+        <IoIosNotifications
+          size={23}
+          className="cursor-pointer text-black dark:text-white"
+          onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+        />
+        {notifications.length > 0 && (
+          <div className="bg-red-600 h-4 w-4 text-[10px] flex items-center justify-center rounded-full relative -top-6 -right-3">
+            {notifications.length}
+          </div>
+        )}
+      </div>
+
+      <div
+        className={`${
+          isNotificationsOpen ? "max-h-44" : ""
+        } absolute z-[100] -top-2.5 left-1/2 -translate-x-1/2 rounded-md bg-slate-200 overflow-y-scroll max-h-0 w-[90%] text-black`}
+        style={{ transition: "max-height 0.5s ease-in-out" }}
+      >
+        {notifications?.map((notification, i) => {
+          console.log(notification);
+          return (
+            <a
+              key={i}
+              href={`/chats?id=${notification.chat._id}`}
+              onClick={() => {
+                setIsNotificationsOpen(false);
+                setNotifications(
+                  notifications.filter((noti) => noti._id !== notification._id)
+                );
+                // navigate(`/chats?id=${notification.chat._id}`);
+              }}
+              className="flex cursor-pointer gap-1 hover:bg-slate-300 duration-150 items-center p-2 w-full border-b-[1px] border-gray-200"
+            >
+              {notification.sender.avatar ? (
+                <div className="w-8 h-8 overflow-hidden rounded-full relative">
+                  <img
+                    src={notification.sender.avatar}
+                    alt="avatar"
+                    className="h-full w-auto object-cover absolute top-0 left-1/2 -translate-x-1/2"
+                  />
+                </div>
+              ) : (
+                <DefaultProfile height="32px" width="32px" size="24" />
+              )}
+              <div className="flex-1 gap-1">
+                <div className="font-semibold text-sm">
+                  {notification.sender.name}
+                </div>
+                <div className="text-xs">
+                  {notification.content.length > 20
+                    ? notification.content.slice(0, 20)
+                    : notification.content}
+                </div>
+              </div>
+            </a>
+          );
+        })}
+      </div>
       <input
         className="w-[95%] bg-gray-100 dark:bg-gray-900 rounded-lg px-4 py-2 text-sm ml-auto mr-auto block"
         placeholder="Search"
