@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "./srver/app.js",
+      "use": "@vercel/node"
+    }
+  ]
+}

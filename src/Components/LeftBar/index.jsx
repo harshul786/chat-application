@@ -16,11 +16,7 @@ export default function LeftBar(props) {
   const [selected, setSelected] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedChatOption, setSelectedChatOption] = useState(0);
-  const { user, notifications } = ChatState();
-
-  useEffect(() => {
-    console.log(notifications[0]);
-  }, [notifications]);
+  const { user } = ChatState();
 
   function SearchDrawer() {
     const [searchUsers, setSearchUsers] = useState("");

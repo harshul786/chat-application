@@ -44,9 +44,10 @@ export default function Profile() {
           setUser({ ...user, avatar: responseData.img });
           localStorage.setItem(
             "userInfo",
-            localStorage
-              .getItem("userInfo")
-              .replace(user.avatar, responseData.img)
+            JSON.stringify({
+              ...localStorage.getItem("userInfo"),
+              avatar: responseData.img,
+            })
           );
           console.log(localStorage.getItem("userInfo"));
         } else {

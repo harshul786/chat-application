@@ -129,6 +129,10 @@ export default function SingleChat({ chatId }) {
     }
   };
 
+  useEffect(() => {
+    console.log("typing: " + isTyping);
+  }, [isTyping]);
+
   const typingHandler = (e) => {
     e.preventDefault();
     setNewMessage(e.target.value);
