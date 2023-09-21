@@ -25,7 +25,6 @@ function App() {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "https://chatnexa.onrender.com/",
         },
         credentials: "include",
       });
