@@ -11,8 +11,5 @@
       "src": "/server/(.*)",
       "dest": "app.js"
     }
-  ],
-  "build": {
-    "strict": false
-  }
+  ]
 }
