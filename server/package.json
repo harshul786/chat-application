@@ -4,6 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
+    "vercel-build": "cd .. && npm run build",
     "build": "cd .. && npm run build && cd server && npm run start",
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
