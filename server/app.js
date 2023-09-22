@@ -23,7 +23,7 @@ const io = socketio(server, {
   pingTimeout: 600000,
 });
 
-app.get("/api/test", (req, res) => {
+app.get("/", (req, res) => {
   res.send("testing");
 });
 
@@ -42,41 +42,41 @@ app.use("/api/message", messageRoutes);
 // });
 
 // ------------------ Deployment ----------------------
-io.on("connection", (socket) => {
-  console.log("New Socket.io Connection! ", socket.connected);
+// io.on("connection", (socket) => {
+//   console.log("New Socket.io Connection! ", socket.connected);
 
-  socket.on("setup", (userData) => {
-    socket.join(userData._id);
-    console.log(userData._id);
-    socket.emit("connected");
-  });
+//   socket.on("setup", (userData) => {
+//     socket.join(userData._id);
+//     console.log(userData._id);
+//     socket.emit("connected");
+//   });
 
-  socket.on("join chat", (room) => {
-    socket.join(room);
-    console.log("user joined room: " + room);
-  });
+//   socket.on("join chat", (room) => {
+//     socket.join(room);
+//     console.log("user joined room: " + room);
+//   });
 
-  socket.on("typing", (room, userName) => {
-    socket.in(room).emit("typing", userName);
-  });
-  socket.on("stop typing", (room, userName) => {
-    socket.in(room).emit("stop typing", userName);
-  });
+//   socket.on("typing", (room, userName) => {
+//     socket.in(room).emit("typing", userName);
+//   });
+//   socket.on("stop typing", (room, userName) => {
+//     socket.in(room).emit("stop typing", userName);
+//   });
 
-  socket.on("new message", (newMessageRecieved) => {
-    var chat = newMessageRecieved.chat;
+//   socket.on("new message", (newMessageRecieved) => {
+//     var chat = newMessageRecieved.chat;
 
-    console.log("new message recieved call");
+//     console.log("new message recieved call");
 
-    if (!chat || !chat?.users) return console.log("chat.users not defined");
+//     if (!chat || !chat?.users) return console.log("chat.users not defined");
 
-    chat.users.forEach((user) => {
-      if (user._id == newMessageRecieved.sender._id) return;
+//     chat.users.forEach((user) => {
+//       if (user._id == newMessageRecieved.sender._id) return;
 
-      socket.in(user._id).emit("message recieved", newMessageRecieved);
-    });
-  });
-});
+//       socket.in(user._id).emit("message recieved", newMessageRecieved);
+//     });
+//   });
+// });
 
 server.listen(3000, () => {
   console.log("server started on port 3000");
