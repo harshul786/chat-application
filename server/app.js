@@ -33,13 +33,13 @@ app.use("/api/", userRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/message", messageRoutes);
 
-// ------------------ Deployment ----------------------
+// ------------------ Frontend ----------------------
 
-app.use(express.static(path.join(__dirname, "..", "build")));
-app.use(express.static(path.join(__dirname, "../public")));
-app.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "..", "build", "index.html"));
-});
+// app.use(express.static(path.join(__dirname, "..", "build")));
+// app.use(express.static(path.join(__dirname, "../public")));
+// app.get("*", (req, res) => {
+//   res.sendFile(path.resolve(__dirname, "..", "build", "index.html"));
+// });
 
 // ------------------ Deployment ----------------------
 io.on("connection", (socket) => {
