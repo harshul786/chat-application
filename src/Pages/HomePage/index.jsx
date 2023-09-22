@@ -1,7 +1,5 @@
-import { useEffect, useState } from "react";
-
+import { useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
-
 import Bg from "../../images/bg";
 import BgDark from "../../images/bgdark";
 import Login from "../../Components/Login";
