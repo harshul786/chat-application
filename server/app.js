@@ -38,7 +38,6 @@ app.get("*", (req, res) => {
 });
 
 // ------------------ Deployment ----------------------
-
 io.on("connection", (socket) => {
   console.log("New Socket.io Connection! ", socket.connected);
 
