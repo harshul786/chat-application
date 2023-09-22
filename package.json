@@ -21,8 +21,8 @@
   },
   "scripts": {
     "local": "react-scripts start",
-    "serve": "react-scripts build && node server/app.js",
-    "start": "node server/app.js",
+    "serve": "react-scripts build && node server/index.js",
+    "start": "node server/index.js",
     "build": "npm i && react-scripts build && npm i --prefix server",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
