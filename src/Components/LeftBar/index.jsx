@@ -465,7 +465,7 @@ export default function LeftBar(props) {
           )}
         </div>
 
-        {selected == 0 ? <Chats /> : <Profile />}
+        {selected === 0 ? <Chats /> : <Profile />}
       </div>
 
       <div className="h-14 border-r border-t-[1px] border-gray-200 bg-white dark:bg-gray-950 transition-colors flex justify-around items-center px-4 z-50 md:w-[25vw] w-full ">

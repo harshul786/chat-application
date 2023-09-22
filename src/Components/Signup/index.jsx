@@ -34,7 +34,7 @@ export default function Signup(props) {
       setIsLoading(false);
       return;
     }
-    if (password != confirmPass) {
+    if (password !== confirmPass) {
       toast.warn("Password strings doesn't matches!", {
         autoClose: 5000,
         position: "bottom-right",

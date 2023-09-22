@@ -7,10 +7,8 @@ import SingleChat from "../../Components/SingleChat";
 export default function ChatPage() {
   // const socket = io.connect();
   const { user } = ChatState();
-  const { selectedChat } = ChatState();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const id = queryParams.get("id");
 
   return (
     <div className="flex w-screen md:h-screen h-[90vh] bg-white dark:bg-gray-950 transition-colors overflow-hidden">

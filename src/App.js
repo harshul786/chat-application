@@ -1,6 +1,5 @@
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import Profile from "./Pages/Profile";
 import HomePage from "./Pages/HomePage";
 import ChatPage from "./Pages/ChatPage";
 import Loading from "./Components/Loading";
@@ -12,8 +11,8 @@ function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const { pathname } = location;
-  const [cookies, setCookie, removeCookie] = useCookies(["Auth"]);
-  const { user, setUser } = ChatState();
+  const [cookies] = useCookies(["Auth"]);
+  const { setUser } = ChatState();
   const [isLoading, setIsLoading] = useState(false);
 
   const getUser = async () => {
