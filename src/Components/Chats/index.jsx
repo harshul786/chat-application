@@ -54,7 +54,6 @@ export default function Chats() {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          // No need to set Access-Control-Allow-Origin in headers for outgoing requests
         },
         credentials: "include",
       });
@@ -64,7 +63,7 @@ export default function Chats() {
         setChats(result);
         console.log(chats);
       } else {
-        console.error("Request failed:", response.status, response.statusText);
+        console.log("Request failed:", response.status, response);
       }
 
       setIsLoading(false);

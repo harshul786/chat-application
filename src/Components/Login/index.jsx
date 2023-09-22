@@ -9,7 +9,7 @@ export default function Login(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { setUser } = ChatState();
+  const { user, setUser } = ChatState();
 
   const navigate = useNavigate();
 
