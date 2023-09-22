@@ -23,6 +23,10 @@ const io = socketio(server, {
   pingTimeout: 600000,
 });
 
+app.get("/api/test", (req, res) => {
+  res.send("testing");
+});
+
 // ------------------ Chat APIs ----------------------
 
 app.use("/api/", userRoutes);
