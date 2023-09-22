@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "devCommand": "cd.. && npm run build",
+  "buildCommand": "cd.. && npm run build",
   "builds": [
     {
       "src": "index.js",
