@@ -11,8 +11,8 @@ function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const { pathname } = location;
-  const [cookies] = useCookies(["Auth"]);
-  const { setUser } = ChatState();
+  const [cookies, setCookie, removeCookie] = useCookies(["Auth"]);
+  const { user, setUser } = ChatState();
   const [isLoading, setIsLoading] = useState(false);
 
   const getUser = async () => {
@@ -74,7 +74,7 @@ function App() {
     if (cookies.Auth) {
       getUser();
     }
-  }, [pathname]);
+  }, [pathname, cookies.Auth]);
 
   return (
     <>
