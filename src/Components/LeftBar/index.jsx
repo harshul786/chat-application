@@ -74,7 +74,7 @@ export default function LeftBar(props) {
             theme: "dark",
           });
           setIsOpen(false);
-          console.log(response);
+
           navigate(`/chats?id=${result._id}`);
           window.location.reload();
         }
@@ -271,7 +271,7 @@ export default function LeftBar(props) {
                   <div
                     className="flex flex-col items-center justify-center gap-2 text-sm"
                     onClick={() => {
-                      groupMembers.length <= 3
+                      groupMembers.length <= 2
                         ? toast.error("Members cannot be less than 3", {
                             position: "top-left",
                             autoClose: 5000,
@@ -329,7 +329,7 @@ export default function LeftBar(props) {
               </button>
               <button
                 onClick={() =>
-                  groupMembers.length > 2
+                  groupMembers.length >= 2
                     ? setSubmited(true)
                     : toast.error("Add atleast 3 members", {
                         position: "top-left",
@@ -403,6 +403,10 @@ export default function LeftBar(props) {
       </div>
     );
   }
+  const userAgent = navigator.userAgent;
+  const isAndroidChrome = /Android.*Chrome\//.test(userAgent);
+  const isIOSChrome = /CriOS/.test(userAgent); // Chrome on iOS
+  const isIOSSafari = /Version.*Mobile.*Safari/.test(userAgent);
 
   return (
     <div
@@ -410,7 +414,13 @@ export default function LeftBar(props) {
     >
       <ToastContainer />
       <section
-        className={`z-[9] absolute dark:text-black left-0 top-0 md:h-screen h-[90vh] w-full bg-white dark:bg-slate-800 shadow-2xl transition-transform ${
+        className={`z-[9] absolute dark:text-black left-0 top-0 md:h-screen ${
+          isIOSSafari
+            ? "h-[90vh]"
+            : isIOSChrome || isAndroidChrome
+            ? "h-[87vh]"
+            : "h-screen"
+        }  w-full bg-white dark:bg-slate-800 shadow-2xl transition-transform ${
           selectedChatOption === 1 ? "translate-x-0" : "-translate-x-full"
         }`}
       >

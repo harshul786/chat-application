@@ -30,6 +30,7 @@ function App() {
       const result = await response.json();
       if (response.ok && result.email) {
         localStorage.setItem("userInfo", JSON.stringify(result.user));
+        console.log(result.user);
         setUser(result.user);
         navigate("/chats");
       }
@@ -58,23 +59,24 @@ function App() {
     };
   }, []);
 
-  useEffect(() => {
-    if (cookies.Auth) {
-      if (pathname === "/") {
-        navigate("/chats");
-      }
-    } else {
-      if (pathname !== "/") {
-        navigate("/");
-      }
-    }
-  }, [cookies.Auth]);
+  // useEffect(() => {
+  //   if (localStorage.getItem("userInfo")) {
+  //     if (pathname === "/") {
+  //       navigate("/chats");
+  //     }
+  //   } else {
+  //     if (pathname !== "/") {
+  //       console.log("here", localStorage.getItem("userInfo"));
+  //       navigate("/");
+  //     }
+  //   }
+  // }, []);
 
-  useEffect(() => {
-    if (cookies.Auth) {
-      getUser();
-    }
-  }, [pathname, cookies.Auth]);
+  // useEffect(() => {
+  //   if (!user) {
+  //     getUser();
+  //   }
+  // }, []);
 
   return (
     <>
@@ -83,7 +85,7 @@ function App() {
           path="/"
           element={mode === null ? <Loading /> : <HomePage mode={mode} />}
         />
-        <Route path="/chats" element={<ChatPage />} />
+        <Route path="/chats" element={isLoading ? <Loading /> : <ChatPage />} />
       </Routes>
     </>
   );

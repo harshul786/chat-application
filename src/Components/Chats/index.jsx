@@ -10,8 +10,16 @@ export default function Chats() {
   const [chats, setChats] = useState([]);
   const { selectedChat, setSelectedChat } = ChatState();
   const [search, setSearch] = useState("");
-  const [filterSearch, setFilterSearch] = useState([]);
-  const { user, notifications, setNotifications } = ChatState();
+  const [filterSearch, setFilterSearch] = useState(null);
+  const {
+    user,
+    notifications,
+    setNotifications,
+    fetchChats,
+    setFetchChats,
+    newLatestMessage,
+    setNewLatestMessage,
+  } = ChatState();
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -77,18 +85,49 @@ export default function Chats() {
     getChats();
   }, []);
 
+  useEffect(() => {
+    if (fetchChats) {
+      getChats();
+      setFetchChats(false);
+    }
+  }, [fetchChats]);
+
+  useEffect(() => {
+    if (newLatestMessage !== null) {
+      setChats((prevChats) => {
+        const newChats = prevChats.map((chat) => {
+          if (chat._id === newLatestMessage.chatId) {
+            console.log(chat, newLatestMessage);
+            const updatedLatestMessage = {
+              ...chat.latestMessage,
+              content: newLatestMessage.content,
+            };
+            return {
+              ...chat,
+              latestMessage: updatedLatestMessage,
+            };
+          }
+          return chat;
+        });
+        return newChats;
+      });
+    }
+    setNewLatestMessage(null);
+  }, [newLatestMessage]);
+
   const handleSearch = (e) => {
     setSearch(e.target.value);
     const filteredChats = chats.filter((chat) => {
       const chatNameMatches = chat.chatName
         .toLowerCase()
         .includes(search.toLowerCase());
-      const secondUserNameMatches = chat.users[1]?.name
-        .toLowerCase()
-        .includes(search.toLowerCase());
-      console.log(chatNameMatches, secondUserNameMatches);
-      return chatNameMatches || secondUserNameMatches;
+      const nameMatches = chat.users?.some((user) =>
+        user.name.toLowerCase().includes(search.toLowerCase())
+      );
+
+      return chatNameMatches || nameMatches;
     });
+
     setFilterSearch(filteredChats);
   };
 
@@ -157,7 +196,7 @@ export default function Chats() {
         className="w-[95%] bg-gray-100 dark:bg-gray-900 rounded-lg px-4 py-2 text-sm ml-auto mr-auto block"
         placeholder="Search"
         value={search}
-        // onChange={handleSearch}
+        onChange={handleSearch}
       />
       <div className="h-full flex flex-col items-center mt-2">
         {isLoading ? (
@@ -166,13 +205,34 @@ export default function Chats() {
           <div className="text-sm tracking-wider italic">
             No Messages Found!
           </div>
-        ) : filterSearch.length !== 0 ? (
+        ) : filterSearch?.length === 0 &&
+          filterSearch !== null &&
+          search.length !== 0 ? (
+          <div>No results found!</div>
+        ) : filterSearch !== null ? (
           filterSearch.map((chat, i) => {
             return (
               <ChatFolder
                 key={i}
-                name={chat.isGroupChat ? chat.chatName : chat.users[1].name}
-                latestMessage="I am sexy and I know it!"
+                name={
+                  chat.isGroupChat
+                    ? chat.chatName
+                    : chat.users[0]._id ===
+                      JSON.parse(localStorage.getItem("userInfo"))._id
+                    ? chat.users[1].name
+                    : chat.users[0].name
+                }
+                chat={
+                  chat.isGroupChat
+                    ? null
+                    : chat.users[0]._id ===
+                      JSON.parse(localStorage.getItem("userInfo"))._id
+                    ? chat.users[1]
+                    : chat.users[0]
+                }
+                latestMessage={
+                  chat.latestMessage?.content ? chat.latestMessage.content : ""
+                }
                 link={`/chats?id=${chat._id}`}
               />
             );
@@ -185,14 +245,16 @@ export default function Chats() {
                 name={
                   chat.isGroupChat
                     ? chat.chatName
-                    : chat.users[0].name === user.name
+                    : chat.users[0]._id ===
+                      JSON.parse(localStorage.getItem("userInfo"))._id
                     ? chat.users[1].name
                     : chat.users[0].name
                 }
                 chat={
                   chat.isGroupChat
                     ? null
-                    : chat.users[0].name === user.name
+                    : chat.users[0]._id ===
+                      JSON.parse(localStorage.getItem("userInfo"))._id
                     ? chat.users[1]
                     : chat.users[0]
                 }

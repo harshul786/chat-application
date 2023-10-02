@@ -87,7 +87,7 @@ export default function ChatView({ groupedMessages }) {
       {groupedMessages.map((messageGroup, groupIndex) => {
         const senderId = messageGroup[0].sender._id;
 
-        return senderId === user._id ? (
+        return senderId === JSON.parse(localStorage.getItem("userInfo"))._id ? (
           <MeMessage key={groupIndex} messages={messageGroup} />
         ) : (
           <YouMessage key={groupIndex} messages={messageGroup} />

@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useMemo,
+} from "react";
 import { useCookies } from "react-cookie";
 import { useLocation, useNavigate } from "react-router-dom";
 import Loading from "../Components/Loading";
@@ -8,8 +14,34 @@ const ChatContext = createContext();
 const ChatProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedChat, setSelectedChat] = useState(null);
-  const [notifications, setNotifications] = useState([]);
+  const [selectedChat, setSelectedChat] = useState("");
+  const [notifications, setNotifications] = useState(
+    localStorage.getItem("notifications")
+      ? JSON.parse(localStorage.getItem("notifications"))
+      : []
+  );
+  const [fetchChats, setFetchChats] = useState(false);
+  const [newLatestMessage, setNewLatestMessage] = useState(null);
+
+  useEffect(() => {
+    localStorage.setItem("notifications", JSON.stringify(notifications));
+  }, [notifications]);
+
+  const contextValue = useMemo(
+    () => ({
+      user,
+      setUser,
+      selectedChat,
+      setSelectedChat,
+      notifications,
+      setNotifications,
+      fetchChats,
+      setFetchChats,
+      newLatestMessage,
+      setNewLatestMessage,
+    }),
+    [user, selectedChat, notifications, fetchChats, newLatestMessage]
+  );
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -64,16 +96,7 @@ const ChatProvider = ({ children }) => {
   }, [user]);
 
   return (
-    <ChatContext.Provider
-      value={{
-        user,
-        setUser,
-        selectedChat,
-        setSelectedChat,
-        notifications,
-        setNotifications,
-      }}
-    >
+    <ChatContext.Provider value={contextValue}>
       {isLoading === true && <Loading />}
       {children}
     </ChatContext.Provider>

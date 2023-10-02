@@ -4,10 +4,14 @@ import Loading from "../Loading";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import DefaultProfile from "../DefaultProfile";
+import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
   const { user, setUser } = ChatState();
-  const [unsavedUser, setUnsavedUser] = useState(user);
+  const navigate = useNavigate();
+  const [unsavedUser, setUnsavedUser] = useState(
+    JSON.parse(localStorage.getItem("userInfo"))
+  );
   const [changesMade, setChangesMade] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -136,6 +140,7 @@ export default function Profile() {
 
         setUser(null);
         localStorage.removeItem("userInfo");
+        navigate("/");
       }
       setIsLoading(false);
     } catch (error) {
@@ -153,10 +158,10 @@ export default function Profile() {
       <ToastContainer />
       {isLoading && <Loading />}
       <div className="mt-4 block ml-auto mr-auto">
-        {user.avatar ? (
+        {JSON.parse(localStorage.getItem("userInfo")).avatar ? (
           <div className="w-24 h-24 overflow-hidden rounded-full relative">
             <img
-              src={user.avatar}
+              src={JSON.parse(localStorage.getItem("userInfo")).avatar}
               alt="avatar"
               className="h-full w-auto object-cover absolute top-0 left-1/2 -translate-x-1/2"
             />

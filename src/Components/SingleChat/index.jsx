@@ -6,7 +6,7 @@ import io from "socket.io-client";
 import ChatView from "../ChatView";
 var socket;
 
-export default function SingleChat({ chatId }) {
+function SingleChat({ chatId }) {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [chatName, setChatName] = useState(null);
@@ -14,7 +14,13 @@ export default function SingleChat({ chatId }) {
   const [groupedMessages, setGroupMessages] = useState([]);
   const [socketConnection, setSocketConnection] = useState(false);
   const [sendNewMessage, setSendNewMessage] = useState(null);
-  const { user, notifications, setNotifications } = ChatState();
+  const {
+    user,
+    notifications,
+    setNotifications,
+    setFetchChats,
+    setNewLatestMessage,
+  } = ChatState();
   const [typing, setTyping] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [whoTyping, setWhoTyping] = useState(null);
@@ -39,7 +45,7 @@ export default function SingleChat({ chatId }) {
         socket.disconnect();
       }
     };
-  }, [user, socket]);
+  }, [user, socket, chatId]);
 
   const getMessages = async () => {
     try {
@@ -70,11 +76,12 @@ export default function SingleChat({ chatId }) {
 
   useEffect(async () => {
     getMessages();
-  }, []);
+  }, [chatId]);
 
   useEffect(() => {
     if (socket) {
       socket.on("message recieved", (messageRecieved) => {
+        setFetchChats(true);
         if (!chatId || chatId != messageRecieved.chat._id) {
           // give notifi
           if (!notifications.includes(messageRecieved)) {
@@ -82,6 +89,10 @@ export default function SingleChat({ chatId }) {
               messageRecieved,
               ...prevNotifications,
             ]);
+            localStorage.setItem(
+              "notifications",
+              JSON.stringify(notifications)
+            );
           }
         } else {
           setMessages((prevMessages) => [...prevMessages, messageRecieved]);
@@ -120,6 +131,7 @@ export default function SingleChat({ chatId }) {
         if (response.ok) {
           setSendNewMessage(result);
           // socket.emit("new message", result);
+          setNewLatestMessage({ content: newMessage, chatId: chatId });
 
           setMessages((prevMessages) => [...prevMessages, result]);
         }
@@ -160,45 +172,69 @@ export default function SingleChat({ chatId }) {
     setGroupMessages(groupConsecutiveMessages(messages));
   }, [messages]);
 
-  if (isLoading) return <Loading />;
-  else
-    return (
-      <div className="flex flex-col w-full md:h-screen h-[90vh]">
-        <div className="h-16 relative flex flex-col justify-center bg-blue-500 text-white items-left px-4">
-          <div
-            className={`text-base absolute transition-all ${
-              isTyping ? "top-3" : "top-1/2 -translate-y-1/2"
-            }
-            `}
-          >
-            {chatName ? chatName : ""}
+  const userAgent = navigator.userAgent;
+  const isAndroidChrome = /Android.*Chrome\//.test(userAgent);
+  const isIOSChrome = /CriOS/.test(userAgent); // Chrome on iOS
+  const isIOSSafari = /Version.*Mobile.*Safari/.test(userAgent);
+
+  return (
+    <div key={chatId} id={chatId}>
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <div
+          className={`flex flex-col w-full md:h-screen ${
+            isIOSSafari
+              ? "h-[90vh]"
+              : isIOSChrome || isAndroidChrome
+              ? "h-[87vh]"
+              : "h-screen"
+          }`}
+        >
+          <div className="h-16 relative flex flex-col justify-center bg-blue-500 text-white items-left px-4">
+            <div
+              className={`text-base absolute transition-all ${
+                isTyping ? "top-3" : "top-1/2 -translate-y-1/2"
+              }`}
+              id={chatName}
+              key={chatName}
+            >
+              {chatName ? chatName : ""}
+            </div>
+
+            <div
+              className={`text-xs absolute bottom-3 transition-all ${
+                isTyping ? "text-white" : "text-transparent"
+              }`}
+              key={isLoading ? "111" : "222"}
+            >
+              {messages[0]
+                ? messages[0].chat.isGroupChat
+                  ? whoTyping + " is Typing..."
+                  : "Typing..."
+                : "Typing..."}
+            </div>
           </div>
 
-          <div
-            className={`text-xs absolute bottom-3 transition-all ${
-              isTyping ? "text-white" : "text-transparent"
-            }`}
-            key={isLoading ? "111" : "222"}
-          >
-            {messages[0]
-              ? messages[0].chat.isGroupChat
-                ? whoTyping + " is Typing..."
-                : "Typing..."
-              : "Typing..."}
-          </div>
-        </div>
-
-        <ChatView groupedMessages={groupedMessages} />
-
-        <div className="h-14 bg-white dark:bg-gray-950 border-t border-gray-200 flex items-center px-4">
-          <input
-            className="w-full touch-manipulation py-2 px-4 dark:bg-gray-900 dark:text-white dark:!border-0 border rounded-md focus:outline-none focus:ring focus:border-blue-500"
-            placeholder="Type your message..."
-            onChange={typingHandler}
-            value={newMessage}
-            onKeyDown={sendMessage}
+          <ChatView
+            groupedMessages={groupedMessages}
+            id={chatId}
+            key={chatId}
           />
+
+          <div className="h-14 bg-white dark:bg-gray-950 border-t border-gray-200 flex items-center px-4">
+            <input
+              className="w-full touch-manipulation py-2 px-4 dark:bg-gray-900 dark:text-white dark:!border-0 border rounded-md focus:outline-none focus:ring focus:border-blue-500"
+              placeholder="Type your message..."
+              onChange={typingHandler}
+              value={newMessage}
+              onKeyDown={sendMessage}
+            />
+          </div>
         </div>
-      </div>
-    );
+      )}
+    </div>
+  );
 }
+
+export default SingleChat;
