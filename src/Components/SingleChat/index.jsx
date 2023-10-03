@@ -33,6 +33,7 @@ function SingleChat({ chatId }) {
         setSocketConnection(true);
       });
       socket.on("typing", (userName) => {
+        console.log(userName + " is set typing to true");
         setWhoTyping(userName);
         setIsTyping(true);
       });
@@ -172,10 +173,6 @@ function SingleChat({ chatId }) {
     setGroupMessages(groupConsecutiveMessages(messages));
     console.log(groupedMessages);
   }, [messages]);
-
-  useEffect(() => {
-    console.log(groupedMessages);
-  }, [groupedMessages]);
 
   const userAgent = navigator.userAgent;
   const isAndroidChrome = /Android.*Chrome\//.test(userAgent);

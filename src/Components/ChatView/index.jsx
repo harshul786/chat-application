@@ -46,9 +46,6 @@ const YouMessage = ({ messages }) => {
 };
 
 const MeMessage = ({ messages }) => {
-  {
-    console.log("me message", messages[0].content);
-  }
   return (
     <div className="my-2 flex flex-col gap-2 items-end">
       {messages.map((message, index) => (
@@ -92,7 +89,6 @@ export default function ChatView({ groupedMessages }) {
       {/* Render grouped chat messages */}
       {groupedMessages.map((messageGroup, groupIndex) => {
         const senderId = messageGroup[0].sender._id;
-        console.log("senderId", senderId, user._id);
 
         return senderId === user._id ? (
           <MeMessage key={groupIndex} messages={messageGroup} />

@@ -43,7 +43,7 @@ app.get("*", (req, res) => {
 
 // ------------------ Deployment ----------------------
 io.on("connection", (socket) => {
-  console.log("New Socket.io Connection! ", socket.connected);
+  console.log("New Socket.io Connection!");
 
   socket.on("setup", (userData) => {
     socket.join(userData._id);
@@ -57,6 +57,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("typing", (room, userName) => {
+    console.log("typing call " + userName);
     socket.in(room).emit("typing", userName);
   });
   socket.on("stop typing", (room, userName) => {
@@ -65,8 +66,6 @@ io.on("connection", (socket) => {
 
   socket.on("new message", (newMessageRecieved) => {
     var chat = newMessageRecieved.chat;
-
-    console.log("new message recieved call");
 
     if (!chat || !chat?.users) return console.log("chat.users not defined");
 
