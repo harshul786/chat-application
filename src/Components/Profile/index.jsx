@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChatState } from "../../Context/chatProvider";
 import Loading from "../Loading";
 import { ToastContainer, toast } from "react-toastify";
@@ -14,14 +14,63 @@ export default function Profile() {
   );
   const [changesMade, setChangesMade] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [avatar, setAvatar] = useState(null);
 
   const openFileInput = () => {
     document.getElementById("avatar").click();
   };
 
+  const avatarUpload = async (avatarUrl) => {
+    try {
+      const uploadURL = await fetch("/api/upload-avatar", {
+        method: "POST",
+        body: JSON.stringify({ avatarURL: avatarUrl }),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+      const urlUploadResponse = await uploadURL.json();
+
+      if (uploadURL.ok) {
+        toast("Avatar Uploaded!", {
+          position: "bottom-left",
+          autoClose: 5000,
+          theme: "dark",
+        });
+
+        setUser({ ...user, avatar: avatarUrl });
+        const newInfo = {
+          ...unsavedUser,
+          avatar: avatarUrl,
+        };
+        localStorage.setItem("userInfo", JSON.stringify(newInfo));
+      } else {
+        toast.error(urlUploadResponse.error, {
+          position: "bottom-left",
+          autoClose: 5000,
+          theme: "dark",
+        });
+      }
+    } catch (error) {
+      toast.error("Error uploading avatar.", {
+        position: "bottom-left",
+        autoClose: 5000,
+        theme: "dark",
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (avatar) {
+      avatarUpload(avatar);
+      setAvatar(null);
+    }
+  }, [avatar]);
+
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
-    console.log(file);
     if (file?.size > 1024 * 1024) {
       toast.error("Please Upload file of less than 1MB", {
         position: "bottom-left",
@@ -30,36 +79,27 @@ export default function Profile() {
       });
     } else if (file) {
       try {
-        const formData = new FormData();
-        formData.append("avatar", file);
-        const response = await fetch("/api/upload-avatar", {
-          method: "POST",
-          body: formData,
-
-          credentials: "include",
-        });
-        const responseData = await response.json();
-        if (response.ok) {
-          toast("Avatar Uploaded!", {
+        if (file.type !== "image/png" && file.type !== "image/jpeg") {
+          toast.error("Please Upload a valid image file", {
             position: "bottom-left",
             autoClose: 5000,
             theme: "dark",
           });
-          setUser({ ...user, avatar: responseData.img });
-          localStorage.setItem(
-            "userInfo",
-            JSON.stringify({
-              ...localStorage.getItem("userInfo"),
-              avatar: responseData.img,
-            })
-          );
-          console.log(localStorage.getItem("userInfo"));
+          return;
         } else {
-          toast.error(responseData.error, {
-            position: "bottom-left",
-            autoClose: 5000,
-            theme: "dark",
-          });
+          const data = new FormData();
+          data.append("file", file);
+          data.append("upload_preset", "chat-nexa");
+          // data.append("cloud_name", "harshul");
+          fetch("https://api.cloudinary.com/v1_1/harshul/image/upload", {
+            method: "POST",
+            body: data,
+            withcredentials: false,
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              setAvatar(data.secure_url);
+            });
         }
       } catch (error) {
         toast.error("Error uploading avatar.", {

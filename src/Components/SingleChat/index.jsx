@@ -45,7 +45,7 @@ function SingleChat({ chatId }) {
         socket.disconnect();
       }
     };
-  }, [user, socket, chatId]);
+  }, [user, socket]);
 
   const getMessages = async () => {
     try {
@@ -76,7 +76,7 @@ function SingleChat({ chatId }) {
 
   useEffect(async () => {
     getMessages();
-  }, [chatId]);
+  }, []);
 
   useEffect(() => {
     if (socket) {
@@ -170,7 +170,12 @@ function SingleChat({ chatId }) {
 
   useEffect(() => {
     setGroupMessages(groupConsecutiveMessages(messages));
+    console.log(groupedMessages);
   }, [messages]);
+
+  useEffect(() => {
+    console.log(groupedMessages);
+  }, [groupedMessages]);
 
   const userAgent = navigator.userAgent;
   const isAndroidChrome = /Android.*Chrome\//.test(userAgent);

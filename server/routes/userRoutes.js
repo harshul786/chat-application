@@ -144,26 +144,22 @@ router.put("/edit-profile", auth, async (req, res) => {
   }
 });
 
-// router.post(
-//   "/upload-avatar",
-//   auth,
-//   upload.single("avatar"),
-//   async (req, res) => {
-//     const avatarBinaryData = req.file.buffer;
-//     const base64Image = avatarBinaryData.toString("base64");
-
-//     // Create a data URL for the image
-//     const imageSrc = `data:image/jpeg;base64,${base64Image}`;
-
-//     req.user.avatar = imageSrc;
-
-//     await req.user.save();
-//     res.send({ message: "Avatar uploaded successfully!", img: imageSrc });
-//   },
-//   (error, req, res, next) => {
-//     res.status(400).send({ error: error.message });
-//   }
-// );
+router.post("/upload-avatar", auth, async (req, res) => {
+  const url = req.body.avatarURL;
+  try {
+    if (!url) {
+      throw new Error("Please upload an image!");
+    }
+    req.user.avatar = url;
+    await req.user.save();
+    res.send({
+      user: req.user.getPublicObject(),
+      message: "Avatar uploaded successfully!",
+    });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+});
 
 router.post("/delete-avatar", auth, async (req, res) => {
   req.user.avatar = undefined;

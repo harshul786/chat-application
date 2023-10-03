@@ -78,13 +78,8 @@ const ChatProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    console.log(user, "chatProvider");
     if (user === null) {
       if (localStorage.getItem("userInfo")) {
-        console.log(
-          "localStorage",
-          JSON.parse(localStorage.getItem("userInfo"))
-        );
         setUser(JSON.parse(localStorage.getItem("userInfo")));
       } else if (cookies.Auth) {
         getUser();

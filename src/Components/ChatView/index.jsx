@@ -6,6 +6,9 @@ import React, { useEffect, useRef } from "react";
 const YouMessage = ({ messages }) => {
   return (
     <div className="my-2 ml-10 flex flex-col gap-2">
+      <div className="-mb-1 px-4 text-sm tracking-wider dark:text-white">
+        {messages[0].sender.name}
+      </div>
       {messages.map((message, index) => (
         <div className={"relative"} key={index}>
           {index === messages.length - 1 ? (
@@ -25,15 +28,15 @@ const YouMessage = ({ messages }) => {
               </div>
 
               <BsFillCaretLeftFill
-                className={`absolute -left-[11px] bottom-0.5 text-gray-100`}
-                size={20}
+                className={`absolute -left-[10.5px] bottom-[9px] text-gray-100`}
+                size={22}
               />
             </>
           ) : (
             ""
           )}
 
-          <div className="bg-gray-100 py-2 px-4 rounded-md max-w-xs">
+          <div className="bg-gray-100 py-2 px-4 rounded-[20px] max-w-xs">
             {message.content}
           </div>
         </div>
@@ -43,19 +46,22 @@ const YouMessage = ({ messages }) => {
 };
 
 const MeMessage = ({ messages }) => {
+  {
+    console.log("me message", messages[0].content);
+  }
   return (
     <div className="my-2 flex flex-col gap-2 items-end">
       {messages.map((message, index) => (
         <div className={"relative"} key={index}>
           {index === messages.length - 1 ? (
             <BsFillCaretLeftFill
-              className={`rotate-180 absolute -right-[11px] bottom-0.5 text-blue-500`}
-              size={20}
+              className={`rotate-180 absolute -right-[10.5px] bottom-[8.5px] text-blue-500`}
+              size={22}
             />
           ) : (
             ""
           )}
-          <div className="bg-blue-500 text-white py-2 px-4 rounded-md max-w-xs">
+          <div className="bg-blue-500 text-white py-2 px-4 rounded-[20px] max-w-xs">
             {message.content}
           </div>
         </div>
@@ -86,8 +92,9 @@ export default function ChatView({ groupedMessages }) {
       {/* Render grouped chat messages */}
       {groupedMessages.map((messageGroup, groupIndex) => {
         const senderId = messageGroup[0].sender._id;
+        console.log("senderId", senderId, user._id);
 
-        return senderId === JSON.parse(localStorage.getItem("userInfo"))._id ? (
+        return senderId === user._id ? (
           <MeMessage key={groupIndex} messages={messageGroup} />
         ) : (
           <YouMessage key={groupIndex} messages={messageGroup} />
