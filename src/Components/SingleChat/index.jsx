@@ -142,7 +142,7 @@ function SingleChat({ chatId }) {
   };
 
   useEffect(() => {
-    console.log("typing: " + isTyping);
+    console.log(whoTyping + " is: " + isTyping);
   }, [isTyping]);
 
   const typingHandler = (e) => {
@@ -201,8 +201,7 @@ function SingleChat({ chatId }) {
               className={`text-base absolute transition-all ${
                 isTyping ? "top-3" : "top-1/2 -translate-y-1/2"
               }`}
-              id={chatName}
-              key={chatName}
+              key={chatName + isTyping}
             >
               {chatName ? chatName : ""}
             </div>
@@ -211,7 +210,7 @@ function SingleChat({ chatId }) {
               className={`text-xs absolute bottom-3 transition-all ${
                 isTyping ? "text-white" : "text-transparent"
               }`}
-              key={isLoading ? "111" : "222"}
+              key={isTyping ? "111" : "222"}
             >
               {messages[0]
                 ? messages[0].chat.isGroupChat

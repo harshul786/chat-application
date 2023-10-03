@@ -179,8 +179,6 @@ export default function Profile() {
         });
 
         setUser(null);
-        localStorage.removeItem("userInfo");
-        navigate("/");
       }
       setIsLoading(false);
     } catch (error) {
@@ -191,6 +189,8 @@ export default function Profile() {
         theme: "dark",
       });
     }
+    localStorage.removeItem("userInfo");
+    navigate("/");
   };
 
   return (
