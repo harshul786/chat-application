@@ -32,6 +32,24 @@ function SingleChat({ chatId }) {
       socket.on("connected", () => {
         setSocketConnection(true);
       });
+      // socket.on("typing", (userName) => {
+      //   console.log(userName + " is set typing to true");
+      //   setWhoTyping(userName);
+      //   setIsTyping(true);
+      // });
+      // socket.on("stop typing", (userName) => {
+      //   setIsTyping(false);
+      // });
+    }
+    return () => {
+      if (socket) {
+        socket.disconnect();
+      }
+    };
+  }, [user, socket]);
+
+  useEffect(() => {
+    if (socket) {
       socket.on("typing", (userName) => {
         console.log(userName + " is set typing to true");
         setWhoTyping(userName);
@@ -41,12 +59,7 @@ function SingleChat({ chatId }) {
         setIsTyping(false);
       });
     }
-    return () => {
-      if (socket) {
-        socket.disconnect();
-      }
-    };
-  }, [user, socket]);
+  }, [socket]);
 
   const getMessages = async () => {
     try {
