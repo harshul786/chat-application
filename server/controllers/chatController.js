@@ -15,7 +15,7 @@ const chatObject = async (req, res) => {
 
     isChat = await User.populate(isChat, {
       path: "latestMessage.sender",
-      select: "name email avatar",
+      select: "name email avatar bio",
     });
 
     if (isChat) {
@@ -49,7 +49,7 @@ const accessChat = async (req, res) => {
 
     isChat = await User.populate(isChat, {
       path: "latestMessage.sender",
-      select: "name email avatar",
+      select: "name email avatar bio",
     });
 
     if (isChat.length > 0) {
@@ -97,7 +97,7 @@ const fetchChats = async (req, res) => {
       .then(async (result) => {
         result = await User.populate(result, {
           path: "latestMessage.sender",
-          select: "name avatar email",
+          select: "name avatar email bio",
         });
 
         res.send(result);

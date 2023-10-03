@@ -4,6 +4,7 @@ import { ChatState } from "../../Context/chatProvider";
 import Loading from "../Loading";
 import io from "socket.io-client";
 import ChatView from "../ChatView";
+import { IoMdSend } from "react-icons/io";
 var socket;
 
 function SingleChat({ chatId }) {
@@ -122,7 +123,39 @@ function SingleChat({ chatId }) {
     }
   }, [sendNewMessage]);
 
-  var sendMessage = async (event) => {
+  const sendMessageByClick = async () => {
+    if (newMessage.length > 0) {
+      if (socket) {
+        socket.emit("stop typing", chatId, user.name);
+      }
+
+      try {
+        setNewMessage("");
+        const response = await fetch("/api/message/send-message", {
+          method: "POST",
+          body: JSON.stringify({ chatId, content: newMessage }),
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          setSendNewMessage(result);
+          // socket.emit("new message", result);
+          setNewLatestMessage({ content: newMessage, chatId: chatId });
+
+          setMessages((prevMessages) => [...prevMessages, result]);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  const sendMessage = async (event) => {
     if (event.key === "Enter" && newMessage.length > 0) {
       event.preventDefault();
       if (socket) {
@@ -155,10 +188,6 @@ function SingleChat({ chatId }) {
     }
   };
 
-  useEffect(() => {
-    console.log(whoTyping + " is: " + isTyping);
-  }, [isTyping]);
-
   const typingHandler = (e) => {
     e.preventDefault();
     setNewMessage(e.target.value);
@@ -184,7 +213,6 @@ function SingleChat({ chatId }) {
 
   useEffect(() => {
     setGroupMessages(groupConsecutiveMessages(messages));
-    console.log(groupedMessages);
   }, [messages]);
 
   const userAgent = navigator.userAgent;
@@ -236,13 +264,18 @@ function SingleChat({ chatId }) {
             key={chatId}
           />
 
-          <div className="h-14 bg-white dark:bg-gray-950 border-t border-gray-200 flex items-center px-4">
+          <div className="h-14 relative bg-white dark:bg-gray-950 border-t border-gray-200 flex items-center px-4">
             <input
               className="w-full touch-manipulation py-2 px-4 dark:bg-gray-900 dark:text-white dark:!border-0 border rounded-md focus:outline-none focus:ring focus:border-blue-500"
               placeholder="Type your message..."
               onChange={typingHandler}
               value={newMessage}
               onKeyDown={sendMessage}
+            />
+            <IoMdSend
+              size={20}
+              onClick={sendMessageByClick}
+              className="absolute right-8 top-1/2 -translate-y-1/2 text-blue-500 hover:text-blue-600 hover:scale-105 cursor-pointer duration-100"
             />
           </div>
         </div>
